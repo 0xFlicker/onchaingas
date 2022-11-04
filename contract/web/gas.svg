@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="100" cy="50" rx="100" ry="50" />
+  <ellipse cx="100" cy="150" rx="100" ry="50" />
+  <rect x="0" y="50" width="200" height="100" />
+  <text style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 82.5px;" x="1.113" y="112.193">Onchain Gas</text>
+
+  <path d="M 250.835 148.107 L 416.481 404.232 L 85.189 404.232 L 250.835 148.107 Z" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0);" shape="triangle 85.189 148.107 331.292 256.125 0.5 0 1@c48c5c95" />
+  <text x="50%" text-anchor="middle" style="white-space: pre; fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 51.3px;" y="319.276">0</text>
+</svg>

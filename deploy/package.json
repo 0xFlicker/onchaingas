@@ -1,0 +1,37 @@
+{
+  "name": "next-formclank",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "author": "0xflick <cmdrnft@protonmail.com>",
+  "scripts": {
+    "build": "tsc",
+    "cdk": " node --experimental-json-modules ./node_modules/.bin/cdk",
+    "deploy:0xflick": "AWS_PROFILE=0xflick-portfolio-admin DEPLOYMENT=0xflick.com node --experimental-json-modules ./node_modules/.bin/cdk deploy",
+    "deploy:nameflick": "AWS_PROFILE=nameflick DEPLOYMENT=nameflick.com node --experimental-json-modules ./node_modules/.bin/cdk deploy",
+    "bootstrap": "yarn cdk --app \"node --loader ts-node/esm stack/bootstrap.ts\" bootstrap",
+    "deploy:bootstrap": "yarn cdk --app \"node --loader ts-node/esm stack/bootstrap.ts\" deploy --all",
+    "build:layer:sharp": "bash ./scripts/build-layer-sharp.sh",
+    "build:layer:ipfs": "bash ./scripts/build-layer-ipfs.sh",
+    "build:layer:axolotl": "bash ./scripts/build-layer-axolotl.sh",
+    "build:layer:nameflick-image": "bash ./scripts/build-layer-nameflick-image.sh"
+  },
+  "devDependencies": {
+    "@serverless-stack/resources": "^1.1.2",
+    "@sls-next/lambda-at-edge": "3.8.0-alpha.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/node": "^18.0.0",
+    "@types/source-map-support": "^0.5.4",
+    "aws-cdk-lib": "^2.28.1",
+    "cdk": "^2.33.0",
+    "fs-extra": "^10.1.0",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.4"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "aws-cdk": "^2.32.1",
+    "jose": "^4.8.3"
+  }
+}

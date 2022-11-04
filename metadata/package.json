@@ -1,0 +1,23 @@
+{
+  "name": "metadata",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build:metadata": "esbuild metadata.ts --platform=node --target=node16.14 --bundle --outfile=../deploy/.layers/metadata/index.cjs"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.106",
+    "esbuild": "^0.15.10",
+    "eslint": "^8.25.0",
+    "prettier": "^2.7.1",
+    "serverless": "^3.23.0",
+    "serverless-offline": "^11.1.2",
+    "serverless-plugin-typescript": "^2.1.4",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "aws-lambda": "^1.0.7",
+    "ethers": "^5.7.1"
+  }
+}

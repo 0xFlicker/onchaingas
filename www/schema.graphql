@@ -1,0 +1,232 @@
+type NameflickAddress {
+  eth: String
+  btc: String
+  ltc: String
+  doge: String
+}
+
+type NameflickTextRecord {
+  email: String
+  avatar: String
+  description: String
+  comDiscord: String
+  comGithub: String
+  url: String
+  notice: String
+  keywords: String
+  comReddit: String
+  comTwitter: String
+  orgTelegram: String
+}
+
+type Nameflick {
+  domain: ID!
+  ensHash: String
+  rootDomain: String!
+  ttl: Int
+  addresses: NameflickAddress!
+  content: String
+  textRecord: NameflickTextRecord!
+  etherscan: String!
+}
+
+input NameflickAddressInput {
+  eth: String
+  btc: String
+  ltc: String
+  doge: String
+}
+
+input NameflickTextRecordInput {
+  email: String
+  avatar: String
+  description: String
+  comDiscord: String
+  comGithub: String
+  url: String
+  notice: String
+  keywords: String
+  comReddit: String
+  comTwitter: String
+  orgTelegram: String
+}
+
+input NameflickFieldsInput {
+  addresses: NameflickAddressInput
+  content: String
+  textRecord: NameflickTextRecordInput
+}
+
+type ChainQuery {
+  chainId: String!
+  chainName: String!
+  ensRegistry: String
+  flick: Flick
+  image(contract: String!, tokenId: Int!, width: Int, height: Int): String
+}
+
+type Nonce {
+  nonce: Int!
+}
+
+type Web3User {
+  address: ID!
+  nonce: Int!
+  roles: [Role!]!
+  allowedActions: [Permission!]!
+  bindToRole(roleId: String!): Web3User!
+  isTwitterFollower: Boolean!
+}
+
+type Web3LoginUser {
+  address: ID!
+  user: Web3User!
+  token: String!
+}
+
+enum PermissionAction {
+  CREATE
+  UPDATE
+  DELETE
+  LIST
+  GET
+  USE
+  ADMIN
+}
+
+enum PermissionResource {
+  ALL
+  USER
+  USER_ROLE
+  ADMIN
+  PRESALE
+  FAUCET
+  PERMISSION
+  ROLE
+  AFFILIATE
+}
+
+type Permission {
+  action: PermissionAction!
+  resource: PermissionResource!
+  identifier: String
+}
+
+input PermissionInput {
+  action: PermissionAction!
+  resource: PermissionResource!
+  identifier: String
+}
+
+type Role {
+  id: ID!
+  name: String!
+  userCount: Int!
+  permissions: [Permission!]!
+  bindToUser(userAddress: String!): Web3User!
+  unbindFromUser(userAddress: String!): Web3User!
+  delete: Boolean!
+}
+
+type MetadataProperties {
+  name: String!
+  value: String!
+}
+
+type MetadataAttributeString {
+  value: String!
+  trait_type: String!
+  colors: [String!]
+}
+
+type MetadataAttributeNumeric {
+  value: Float!
+  trait_type: String
+  display_type: String
+}
+
+union MetadataAttribute = MetadataAttributeString | MetadataAttributeNumeric
+
+type Metadata {
+  image: String
+  description: String
+  tokenId: String!
+  id: String!
+  externalUrl: String
+  name: String
+  attributes: [MetadataAttribute!]
+  properties: [MetadataProperties!]
+  edition: String
+}
+
+type NftToken {
+  id: ID!
+  tokenId: String!
+  image(width: Int, height: Int): String
+  metadata: Metadata
+}
+
+type Nft {
+  collectionName: String!
+  contractAddress: String!
+  ownedTokens: [NftToken!]!
+}
+
+type Flick {
+  nfts: [Nft!]
+}
+
+type PresaleApprovalResponse {
+  approved: Boolean!
+  token: String!
+}
+
+type Affiliate {
+  address: String!
+  slug: String!
+  role: Role!
+  deactivated: Boolean
+}
+
+type AffiliateQuery {
+  address: ID!
+  slugs: [String!]!
+  role: Role!
+}
+
+type AffiliateMutation {
+  address: ID!
+  createSlug(slug: String): AffiliateMutation!
+  deactivate(slug: String!): AffiliateMutation!
+  delete: Boolean!
+  slugs: [String!]!
+  role: Role!
+}
+
+type Query {
+  nameflickByFqdn(fqdn: ID!): Nameflick
+  nameflickByEnsHash(ensHash: String!): Nameflick
+  nameflicksByRootDomain(rootDomain: String!): [Nameflick!]!
+  chain(id: ID!): ChainQuery!
+  self: Web3User
+  user(address: ID!): Web3User
+  role(id: ID!): Role!
+  roles: [Role!]!
+  affiliateForAddress(address: String!): AffiliateQuery!
+}
+
+type Mutation {
+  createOrUpdateNameflick(domain: ID!, ttl: Int, fields: NameflickFieldsInput!): Nameflick!
+  deleteNameflick(domain: ID!): Boolean!
+  role(id: ID!): Role!
+  roles: [Role!]!
+  createRole(name: String!, permissions: [PermissionInput!]!): Role!
+  nonceForAddress(address: String!): Nonce
+  signIn(address: String!, jwe: String!, issuedAt: String!, chainId: Int!): Web3LoginUser
+  signOut: Boolean!
+  self: Web3User
+  user(address: ID!): Web3User
+  requestPresaleApproval(affiliate: String): PresaleApprovalResponse!
+  affiliateForAddress(address: String!): AffiliateMutation!
+  createAffiliate(address: String!): AffiliateMutation!
+}

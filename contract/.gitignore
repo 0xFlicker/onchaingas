@@ -1,0 +1,12 @@
+
+dist
+cache
+artifacts
+deployments
+node_modules
+.npmrc
+# from pre-publish
+/*.sol
+yarn-error.log
+.env
+typechain

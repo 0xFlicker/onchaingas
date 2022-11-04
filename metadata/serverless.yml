@@ -1,0 +1,14 @@
+service: app
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+functions:
+  app:
+    handler: metadata.handler
+    events:
+      - httpApi: "GET /{type}/{tokenId}"
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript

@@ -10,16 +10,19 @@ import {
   useContractReads,
   useContractRead,
 } from "wagmi";
-import { useAppSelector } from "app/store";
-import { selectors as web3Selectors } from "features/web3";
-import { FC, useCallback, useState } from "react";
+import { useAppSelector, useAppDispatch } from "app/store";
+import {
+  selectors as web3Selectors,
+  actions as web3Actions,
+} from "features/web3/redux";
+import { FC, useCallback, useEffect, useState } from "react";
 import { nftContractAddress } from "utils/config";
 import nftAbi from "../nft.abi.json";
 import { BigNumber, utils } from "ethers";
 import Slider from "@mui/material/Slider";
 import { MintModal } from "./MintModal";
-import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import { TweetMint } from "./TweetMint";
 
 export const MintCard: FC = () => {
   const [mintModalOpen, setMintModalOpen] = useState(false);
@@ -105,7 +108,9 @@ export const MintCard: FC = () => {
     availableMintResponse instanceof BigNumber
       ? availableMintResponse.toNumber()
       : 0;
-
+  useEffect(() => {
+    setMintAmount(availableMint);
+  }, [availableMint]);
   const { config } = usePrepareContractWrite({
     addressOrName: nftContractAddress.get(),
     contractInterface: nftAbi,
@@ -137,6 +142,10 @@ export const MintCard: FC = () => {
     connected && publicSaleActive && availableMint > maxMint;
   const allMinted = connected && publicSaleActive && availableMint === 0;
 
+  const dispatch = useAppDispatch();
+  const doConnect = useCallback(() => {
+    dispatch(web3Actions.openWalletSelectModal());
+  }, [dispatch]);
   const mint = useCallback(() => {
     mintWrite();
     setMintModalOpen(true);
@@ -181,7 +190,7 @@ export const MintCard: FC = () => {
               Connect your wallet to mint.
             </Typography>
           )}
-          {willExceedMaxMint && (
+          {allMinted && (
             <Typography fontSize={16} color="text.secondary" component="p">
               You have reached the max mint amount.
             </Typography>
@@ -201,31 +210,46 @@ export const MintCard: FC = () => {
               You will exceed the max supply.
             </Typography>
           )}
-          <Typography mt={8}>
-            {mintAmount === 0
-              ? "Mint amount: 0"
-              : mintAmount === 1
-              ? "Mint one token"
-              : `Mint ${mintAmount} tokens`}
+          <Typography mt={2}>
+            {canMint
+              ? mintAmount === 0
+                ? "Mint amount: 0"
+                : mintAmount === 1
+                ? "Mint one token"
+                : `Mint ${mintAmount} tokens`
+              : ""}
           </Typography>
-          <Box maxWidth="sm" marginLeft={4} marginTop={4}>
-            <Slider
-              aria-label="Mint amount"
-              value={mintAmount}
-              getAriaValueText={(value) => value.toString()}
-              onChange={(_, value) => setMintAmount(value as number)}
-              step={1}
-              max={(canMint && availableMint) || 0}
-              min={canMint ? 1 : 0}
-              valueLabelDisplay="auto"
-              marks={[]}
-            />
+          {connected && availableMint === 0 && (
+            <Typography>Thank you for your support</Typography>
+          )}
+          <Box maxWidth="sm" marginLeft={4}>
+            {canMint && availableMint > 1 && (
+              <Slider
+                aria-label="Mint amount"
+                value={mintAmount}
+                getAriaValueText={(value) => value.toString()}
+                onChange={(_, value) => setMintAmount(value as number)}
+                step={1}
+                max={availableMint}
+                min={canMint ? 1 : 0}
+                valueLabelDisplay="auto"
+                marks={[]}
+              />
+            )}
           </Box>
         </CardContent>
         <CardActions>
-          <Button size="small" onClick={mint} disabled={!canMint || !connected}>
-            Mint
-          </Button>
+          {!connected && (
+            <Button size="small" onClick={doConnect}>
+              Connect
+            </Button>
+          )}
+          {connected && canMint && (
+            <Button size="small" onClick={mint} disabled={!canMint}>
+              Mint
+            </Button>
+          )}
+          {connected && availableMint === 0 && <TweetMint />}
         </CardActions>
       </Card>
     </>

@@ -14,6 +14,8 @@ import { formatAddressShort } from "utils/formatter";
 import { utils } from "ethers";
 import { SendTransactionResult } from "@wagmi/core";
 import { blockchainExplorerUrl } from "utils/config";
+import { TweetMint } from "./TweetMint";
+import CardActions from "@mui/material/CardActions";
 
 interface IProps {
   open: boolean;
@@ -44,6 +46,11 @@ export const MintModal: FC<IProps> = ({
       setVerified(false);
     }, 5000);
   }, [handleClose]);
+  useEffect(() => {
+    if (!isSuccess && !isLoading) {
+      handleClose();
+    }
+  }, [handleClose, isSuccess, isLoading]);
 
   return (
     <Modal
@@ -84,12 +91,12 @@ export const MintModal: FC<IProps> = ({
                 alignContent="center"
               >
                 {isSuccess && !verified && (
-                  <Typography sx={{ my: 2, mx: 8 }} textAlign="center">
+                  <Typography sx={{ my: 2, mx: 2 }} textAlign="center">
                     Your transaction is being processed. Please wait.
                   </Typography>
                 )}
                 {isLoading && !verified && (
-                  <Typography sx={{ my: 2, mx: 8 }} textAlign="center">
+                  <Typography sx={{ my: 2, mx: 2 }} textAlign="center">
                     Accept the mint transaction.
                   </Typography>
                 )}
@@ -100,14 +107,14 @@ export const MintModal: FC<IProps> = ({
                 )}
 
                 {result?.hash && verified && (
-                  <Box sx={{ my: 2, mx: 8 }} textAlign="center">
+                  <Box sx={{ my: 2, mx: 2 }} textAlign="center">
                     <Typography gutterBottom>
                       Your transaction was successful.
                     </Typography>
                   </Box>
                 )}
                 {result?.hash && (
-                  <Box sx={{ my: 2, mx: 8 }} textAlign="center">
+                  <Box sx={{ my: 2 }} textAlign="center">
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
@@ -117,6 +124,7 @@ export const MintModal: FC<IProps> = ({
                 )}
               </Box>
             </CardContent>
+            <CardActions>{result?.hash && <TweetMint />}</CardActions>
           </Card>
         </Box>
       </Fade>

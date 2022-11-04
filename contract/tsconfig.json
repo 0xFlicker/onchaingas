@@ -1,0 +1,30 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "composite": true,
+    "outDir": "dist",
+    "incremental": true,
+    "noErrorTruncation": true,
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "strictPropertyInitialization": false
+  },
+  "include": [
+    "./hardhat.config.ts",
+    "./index.ts",
+    "utils/**/*.json",
+    "deploy/**/*.ts",
+    "typechain/**/*.ts",
+    "utils/**/*.ts",
+    "test/**/*.ts",
+    "deployments/**/*.json"
+  ],
+  "exclude": ["node_modules"],
+  "references": []
+}

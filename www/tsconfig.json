@@ -23,37 +23,14 @@
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
     "paths": {
-      "@0xflick/models": ["../../packages/models/src/index"],
-      "@0xflick/backend": ["../../packages/backend/src/index"],
-      "@0xflick/graphql": ["../../packages/backend/src/index"],
-      "@0xflick/contracts": ["../../packages/contracts/index"],
-      "@0xflick/assets": ["../../packages/assets/src/index"]
-    },
-    "plugins": [
-      {
-        "name": "ts-graphql-plugin",
-        "schema": "./schema.graphql",
-        "tag": "gql"
-      }
-    ]
+      "@onchaingas/contract": ["../contract/index"]
+    }
   },
   "include": ["next-env.d.ts", "ethereum.d.ts", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["./node_modules"],
   "references": [
     {
-      "path": "../../packages/models"
-    },
-    {
-      "path": "../../packages/backend"
-    },
-    {
-      "path": "../../packages/graphql"
-    },
-    {
-      "path": "../../packages/assets"
-    },
-    {
-      "path": "../../packages/contracts"
+      "path": "../contract/tsconfig.json"
     }
   ]
 }

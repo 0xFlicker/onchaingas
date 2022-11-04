@@ -3,17 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev:start": "concurrently \"yarn dev:ssl\" \"yarn dev | bunyan\"",
-    "dev": "next dev",
-    "build:0xflick": "node build.mjs 0xflick.com",
-    "build:nameflick": "node build.mjs nameflick.com",
-    "dev:ssl": "local-ssl-proxy --source 9000 --target 3000",
-    "start": "next start",
-    "lint": "next lint",
-    "generate": "yarn generate:schema && yarn generate:introspection && yarn generate:types",
-    "generate:schema": "yarn --cwd ../../packages/graphql schema:build",
-    "generate:introspection": "node scripts/possibleTypes.cjs",
-    "generate:types": "graphql-codegen --config codegen.yml"
+    "dev": "next dev"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",
@@ -50,6 +40,6 @@
     "eslint-config-next": "12.1.6",
     "next-transpile-modules": "^9.0.0",
     "typechain": "^8.1.0",
-    "typescript": "4.7.3"
+    "typescript": "^4.8.4"
   }
 }

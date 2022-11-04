@@ -2,7 +2,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useAppDispatch, useAppSelector } from "app/store";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { FC, useCallback, useState, MouseEvent } from "react";
 import {
   actions as web3Actions,

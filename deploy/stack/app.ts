@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import * as cdk from "aws-cdk-lib";
-import { jsonFromSecret } from "./utils/files.js";
 
 import { WwwStack } from "./www.js";
 import path from "path";

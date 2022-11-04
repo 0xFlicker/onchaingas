@@ -6,29 +6,26 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+See [.env.example](/.env.example)
+
+Make a copy and fill in the values
 
 ```bash
-yarn dev:start
+cp .env.example .env
 ```
 
-Open [https://localhost:9000](https://localhost:9000) with your browser to see the result. Secure context is needed for auth
+Next, run the development server:
 
-## Structure
-
- - [app](./src/app/) -- Core redux app bindings
- - [context](./src/context/) -- Default providers for React context
- - [features](./src/features/) -- Groups of related redux, api, hooks and components
- - [graphql](./src/graphql/) -- Apollo client
- - [hooks](./src/hooks/) -- Global app hooks
- - [layouts](./src/layouts) --  Common page layouts
- - [locales](./src/locales/) -- Language files (still only in english)
- - [pages](./src/pages/) -- Next.JS routing
- - [styles]
-
-## Building
-
-Production build:
+```bash
+yarn dev
 ```
-yarn build
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+# Building
+
+To make a production build:
+
+```bash
+node build.mjs
 ```

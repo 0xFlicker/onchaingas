@@ -1,0 +1,12 @@
+{
+  "name": "onchain-gas",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "repository": "git@github.com-cmdrnft:0xFlicker/onchaingas.git",
+  "author": "John Dean <john.holmes.dean@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.8.4"
+  }
+}

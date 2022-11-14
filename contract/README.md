@@ -1,4 +1,4 @@
-# OnChanGas Hardhat project
+# OnChainGas Hardhat project
 
 See [web](./web) for files that are packed onchain
 

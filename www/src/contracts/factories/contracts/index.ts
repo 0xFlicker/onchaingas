@@ -3,9 +3,12 @@
 /* eslint-disable */
 export * as compilerSol from "./Compiler.sol";
 export * as dataChunkCompilerSol from "./DataChunkCompiler.sol";
+export * as onChainCheckRendererSol from "./OnChainCheckRenderer.sol";
+export * as onchainCheckSol from "./OnchainCheck.sol";
 export * as viewGasSol from "./ViewGas.sol";
 export { FFlateDataChunk1__factory } from "./FFlateDataChunk1__factory";
 export { FFlateDataChunk2__factory } from "./FFlateDataChunk2__factory";
+export { IMetaDataURI__factory } from "./IMetaDataURI__factory";
 export { OnchainGas__factory } from "./OnchainGas__factory";
 export { ThreeDataChunk1__factory } from "./ThreeDataChunk1__factory";
 export { ThreeDataChunk2__factory } from "./ThreeDataChunk2__factory";

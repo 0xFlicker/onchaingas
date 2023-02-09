@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import pkg from '@sls-next/lambda-at-edge';
-import { parse } from "dotenv"
 import 'dotenv/config';
 const { Builder } = pkg;
 

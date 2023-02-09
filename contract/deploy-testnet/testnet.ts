@@ -1,6 +1,11 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import fs from "fs";
 import { DeployFunction } from "hardhat-deploy/types";
-import { OnchainGas__factory } from "../typechain";
+import {
+  OnchainCheckgas__factory,
+  OnchainCheckRenderer__factory,
+} from "../typechain";
+import { OnchainCheckGas__factory } from "../typechain/factories/contracts";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network, run, ethers } = hre;
@@ -41,7 +46,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     })
   );
   currentNonce = await ethers.provider.getTransactionCount(deployer);
-  const nftArgs = [
+  const rendererArgs = [
     compilerDeployed.address,
     t1.address,
     t2.address,
@@ -53,7 +58,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     t8.address,
     t9.address,
   ];
-  const nft = await deploy("OnchainGas", {
+  const renderer = await deploy("OnchainCheckRenderer", {
+    from: deployer,
+    args: rendererArgs,
+    log: true,
+    waitConfirmations: 5,
+    nonce: currentNonce,
+  });
+  const nftArgs = [
+    renderer.address,
+    "0x8661f2e7734f1e8f793701e74b16b18351da87c3",
+  ];
+  currentNonce = await ethers.provider.getTransactionCount(deployer);
+  const nft = await deploy("OnchainCheckGas", {
     from: deployer,
     args: nftArgs,
     log: true,
@@ -132,24 +149,42 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       constructorArguments: [],
     });
   }
-  if (nft.newlyDeployed) {
+  const ownerSigner = await ethers.getSigner(deployer);
+  const nftContract = OnchainCheckGas__factory.connect(
+    nft.address,
+    ownerSigner
+  );
+
+  if (true) {
     // await run("verify:verify", {
-    //   address: nft.address,
-    //   constructorArguments: nftArgs,
+    //   address: renderer.address,
+    //   constructorArguments: rendererArgs,
     // });
+    await run("verify:verify", {
+      address: nft.address,
+      constructorArguments: nftArgs,
+    });
     const ownerSigner = await ethers.getSigner(deployer);
-    const nftContract = OnchainGas__factory.connect(nft.address, ownerSigner);
+    const rendererContract = OnchainCheckRenderer__factory.connect(
+      renderer.address,
+      ownerSigner
+    );
     console.log("Setting RPC URL");
-    await nftContract.setRpc(
+    await rendererContract.setRpc(
       "https://mainnet.infura.io/v3/382301aaaf3f4060bdefdbd132ae3c8f"
     );
     console.log("Enabling mint");
+
     const activeReceipt = await nftContract.setMintActive(true);
     await activeReceipt.wait();
-    console.log("Mint one");
-    await nftContract.gift(deployer, 10);
-    await nftContract.withdraw();
+    console.log("Mint ten");
+    const tx = await nftContract.gift(deployer, 10);
+    await tx.wait();
+    // await nftContract.withdraw();
   }
+  let uri = await nftContract.tokenURI(1);
+  uri = decodeURIComponent(uri.split("data:application/json,")[1]);
+  await fs.promises.writeFile("token.json", uri, "utf8");
 };
 export default func;
 func.tags = ["testnet"];

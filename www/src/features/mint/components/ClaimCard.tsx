@@ -16,15 +16,19 @@ import {
   actions as web3Actions,
 } from "features/web3/redux";
 import { FC, useCallback, useEffect, useState } from "react";
-import { nftOnChainGasContractAddress } from "utils/config";
-import nftAbi from "../nft.abi.json";
+import {
+  nftOnChainGasContractAddress,
+  nftOnChainCheckContractAddress,
+} from "utils/config";
+import gasAbi from "../nft.abi.json";
+import checkAbi from "../check.abi.json";
 import { BigNumber, utils } from "ethers";
 import Slider from "@mui/material/Slider";
 import { MintModal } from "./MintModal";
 import Box from "@mui/material/Box";
-import { TweetMint } from "./TweetMint";
+import { TweetCheck } from "./TweetCheck";
 
-export const MintCard: FC = () => {
+export const ClaimCard: FC = () => {
   const [mintModalOpen, setMintModalOpen] = useState(false);
   const [mintAmount, setMintAmount] = useState(1);
   const address = useAppSelector(web3Selectors.address);
@@ -38,41 +42,36 @@ export const MintCard: FC = () => {
   } = useContractReads({
     contracts: [
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        addressOrName: nftOnChainCheckContractAddress.get(),
+        contractInterface: checkAbi,
         functionName: "publicSaleActive",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        addressOrName: nftOnChainCheckContractAddress.get(),
+        contractInterface: checkAbi,
         functionName: "totalSupply",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
-        functionName: "maxSupply",
-      },
-      {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        addressOrName: nftOnChainCheckContractAddress.get(),
+        contractInterface: checkAbi,
         functionName: "cost",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        addressOrName: nftOnChainCheckContractAddress.get(),
+        contractInterface: checkAbi,
         functionName: "maxMint",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        addressOrName: nftOnChainCheckContractAddress.get(),
+        contractInterface: checkAbi,
         functionName: "availableMint",
         args: [address],
       },
     ],
   });
   const { data: balanceOfResponse, refetch: balanceRefetch } = useContractRead({
-    addressOrName: nftOnChainGasContractAddress.get(),
-    contractInterface: nftAbi,
+    addressOrName: nftOnChainCheckContractAddress.get(),
+    contractInterface: checkAbi,
     functionName: "balanceOf",
     args: [address],
     cacheTime: 0,
@@ -81,7 +80,6 @@ export const MintCard: FC = () => {
   const [
     publicSaleActiveResponse,
     totalSupplyResponse,
-    maxSupplyResponse,
     costResponse,
     maxMintResponse,
     availableMintResponse,
@@ -99,8 +97,6 @@ export const MintCard: FC = () => {
     totalSupplyResponse instanceof BigNumber
       ? totalSupplyResponse.toNumber()
       : 0;
-  const maxSupply =
-    maxSupplyResponse instanceof BigNumber ? maxSupplyResponse.toNumber() : 0;
   const costWei =
     costResponse instanceof BigNumber ? costResponse : BigNumber.from(0);
   const maxMint = typeof maxMintResponse === "number" ? maxMintResponse : 0;
@@ -111,21 +107,74 @@ export const MintCard: FC = () => {
   useEffect(() => {
     setMintAmount(availableMint);
   }, [availableMint]);
-  const { config } = usePrepareContractWrite({
+
+  const { data: tokensOfOwnerResponse } = useContractRead({
     addressOrName: nftOnChainGasContractAddress.get(),
-    contractInterface: nftAbi,
+    contractInterface: gasAbi,
+    functionName: "tokensOfOwner",
+    args: [address],
+  });
+  const tokensOfOwner: number[] =
+    tokensOfOwnerResponse?.map((token) => token.toNumber()) || [];
+
+  const { data: availableClaimsResponse } = useContractReads({
+    contracts: tokensOfOwner.map((tokenId) => ({
+      addressOrName: nftOnChainCheckContractAddress.get(),
+      contractInterface: checkAbi,
+      functionName: "claimed",
+      args: [tokenId],
+    })),
+  });
+
+  const availableClaims =
+    availableClaimsResponse
+      ?.map((d, index) => (!d ? tokensOfOwner[index] : null))
+      .filter((d) => !!d) || [];
+
+  const { config: mintConfig } = usePrepareContractWrite({
+    addressOrName: nftOnChainCheckContractAddress.get(),
+    contractInterface: checkAbi,
     functionName: "mint",
     args: [address, mintAmount],
+    enabled: availableClaims.length === 0,
     overrides: {
       value: costWei.mul(mintAmount),
     },
   });
+
+  const { config: claimConfig } = usePrepareContractWrite({
+    addressOrName: nftOnChainCheckContractAddress.get(),
+    contractInterface: checkAbi,
+    functionName: "claimAndMint",
+    args: [availableClaims, mintAmount],
+    enabled: availableClaims.length > 0,
+    overrides: {
+      value: costWei.mul(mintAmount),
+    },
+  });
+
   const {
-    data: mintData,
-    isLoading: mintIsLoading,
-    isSuccess: mintIsSuccess,
-    write: mintWrite,
-  } = useContractWrite(config);
+    data: claimMintData,
+    isLoading: claimMintIsLoading,
+    isSuccess: claimMintIsSuccess,
+    write: claimMintWrite,
+  } = useContractWrite(claimConfig);
+
+  const {
+    data: mintOnlyData,
+    isLoading: mintOnlyIsLoading,
+    isSuccess: mintOnlyIsSuccess,
+    write: mintOnlyWrite,
+  } = useContractWrite(mintConfig);
+
+  const mintWrite = availableClaims.length ? claimMintWrite : mintOnlyWrite;
+  const mintIsLoading = availableClaims.length
+    ? claimMintIsLoading
+    : mintOnlyIsLoading;
+  const mintIsSuccess = availableClaims.length
+    ? claimMintIsSuccess
+    : mintOnlyIsSuccess;
+  const mintData = availableClaims.length ? claimMintData : mintOnlyData;
 
   let description = "";
   if (publicSaleActive) {
@@ -133,11 +182,12 @@ export const MintCard: FC = () => {
   } else {
     description = "The mint is not active yet.";
   }
-  const canMint = connected && publicSaleActive && availableMint > 0;
+  if (availableClaims.length) {
+    description += ` You have ${availableClaims.length} available claims from OnChainGas.`;
+  }
+  const canMint = publicSaleActive && availableMint > 0;
   const willOverAllocate =
     connected && publicSaleActive && mintAmount > availableMint;
-  const willExceedMaxSupply =
-    connected && publicSaleActive && mintAmount + totalSupply > maxSupply;
   const willExceedMaxMint =
     connected && publicSaleActive && availableMint > maxMint;
   const allMinted = connected && publicSaleActive && availableMint === 0;
@@ -156,7 +206,10 @@ export const MintCard: FC = () => {
     batchRefetch();
     balanceRefetch();
   }, [batchRefetch, balanceRefetch]);
-
+  let minMintAmount = 0;
+  if (!availableClaims.length && canMint) {
+    minMintAmount = 1;
+  }
   return (
     <>
       <MintModal
@@ -165,6 +218,7 @@ export const MintCard: FC = () => {
         isLoading={mintIsLoading}
         isSuccess={mintIsSuccess}
         result={mintData}
+        isCheck
       />
       <Card>
         <CardHeader title="Mint" />
@@ -181,9 +235,7 @@ export const MintCard: FC = () => {
             component="p"
             gutterBottom
           >
-            {readIsLoading
-              ? "Loading..."
-              : `supply (${totalSupply} / ${maxSupply})`}
+            {readIsLoading ? "Loading..." : `Total minted (${totalSupply})`}
           </Typography>
           {!connected && (
             <Typography fontSize={16} color="text.secondary" component="p">
@@ -205,25 +257,29 @@ export const MintCard: FC = () => {
               You have minted your max amount.
             </Typography>
           )}
-          {!willExceedMaxMint && !willOverAllocate && willExceedMaxSupply && (
-            <Typography fontSize={16} color="text.secondary" component="p">
-              You will exceed the max supply.
-            </Typography>
-          )}
           <Typography mt={2}>
             {canMint
               ? mintAmount === 0
-                ? "Mint amount: 0"
+                ? availableClaims.length
+                  ? `Claim ${availableClaims.length} token${
+                      availableClaims.length > 1 ? "s" : ""
+                    } for free`
+                  : "Mint amount: 0"
                 : mintAmount === 1
                 ? "Mint one token"
-                : `Mint ${mintAmount} tokens`
+                : `Mint ${mintAmount} tokens` +
+                  (availableClaims.length > 0
+                    ? ` (claiming an additional ${
+                        availableClaims.length
+                      } token${availableClaims.length > 1 ? "s" : ""} for free)`
+                    : "")
               : ""}
           </Typography>
           {connected && availableMint === 0 && (
             <Typography>Thank you for your support</Typography>
           )}
           <Box maxWidth="sm" marginLeft={4}>
-            {canMint && availableMint > 1 && (
+            {((canMint && availableMint > 1) || availableClaims.length > 0) && (
               <Slider
                 aria-label="Mint amount"
                 value={mintAmount}
@@ -231,7 +287,7 @@ export const MintCard: FC = () => {
                 onChange={(_, value) => setMintAmount(value as number)}
                 step={1}
                 max={availableMint}
-                min={canMint ? 1 : 0}
+                min={minMintAmount}
                 valueLabelDisplay="auto"
                 marks={[]}
               />
@@ -249,7 +305,7 @@ export const MintCard: FC = () => {
               Mint
             </Button>
           )}
-          {connected && availableMint === 0 && <TweetMint />}
+          {connected && availableMint === 0 && <TweetCheck />}
         </CardActions>
       </Card>
     </>

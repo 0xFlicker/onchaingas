@@ -45,6 +45,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FFlateDataChunk2__factory>;
     getContractFactory(
+      name: "IMetaDataURI",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IMetaDataURI__factory>;
+    getContractFactory(
+      name: "OnchainCheckGas",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OnchainCheckGas__factory>;
+    getContractFactory(
+      name: "OnchainGasRenderer",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OnchainGasRenderer__factory>;
+    getContractFactory(
       name: "OnchainGas",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OnchainGas__factory>;
@@ -149,6 +161,21 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FFlateDataChunk2>;
+    getContractAt(
+      name: "IMetaDataURI",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IMetaDataURI>;
+    getContractAt(
+      name: "OnchainCheckGas",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OnchainCheckGas>;
+    getContractAt(
+      name: "OnchainGasRenderer",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OnchainGasRenderer>;
     getContractAt(
       name: "OnchainGas",
       address: string,

@@ -7,7 +7,7 @@ import {
   useMemo,
 } from "react";
 import { AppDispatch, useAppDispatch, useAppSelector } from "app/store";
-import { useAccount, useConnect, Chain, allChains, Connector } from "wagmi";
+import { useAccount, useConnect, Chain, Connector } from "wagmi";
 import {
   actions as web3Actions,
   selectors as web3Selectors,
@@ -21,6 +21,7 @@ import {
   isWalletConnector,
   TAppConnectors,
 } from "./wagmi";
+import { supportedChains } from "utils/config";
 
 export type TChain = Chain & {
   chainImageUrl: string;
@@ -30,6 +31,9 @@ export function decorateChainImageUrl(chain: Chain): TChain {
   switch (chain?.id) {
     case 1:
       chainImageUrl = "/chains/homestead.png";
+      break;
+    case 5:
+      chainImageUrl = "/chains/goerli.png";
       break;
     case 111_55_111:
       chainImageUrl = "/chains/sepolia.png";
@@ -66,7 +70,8 @@ export function useWeb3Context() {
   const walletPendingType = useAppSelector(web3Selectors.pendingType);
   const walletStatus = useAppSelector(web3Selectors.status);
   const chain = useMemo<TChain | null>(() => {
-    const c = chainId && allChains.find((chain) => chain.id === chainId);
+    const c =
+      chainId && supportedChains.get().find((chain) => chain.id === chainId);
     if (c) {
       return decorateChainImageUrl(c);
     }

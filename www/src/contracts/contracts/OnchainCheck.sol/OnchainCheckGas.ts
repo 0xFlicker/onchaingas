@@ -49,17 +49,23 @@ export declare namespace IERC721A {
   };
 }
 
-export interface OnchainGasInterface extends utils.Interface {
+export interface OnchainCheckGasInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
+    "availableMint(address)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "claim(uint256[])": FunctionFragment;
+    "claimAndMint(uint256[],uint256)": FunctionFragment;
+    "claimed(uint256)": FunctionFragment;
     "cost()": FunctionFragment;
     "explicitOwnershipOf(uint256)": FunctionFragment;
     "explicitOwnershipsOf(uint256[])": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
+    "getGasPriceAtMint(uint256)": FunctionFragment;
+    "getTokenSeed(uint256)": FunctionFragment;
+    "gift(address,uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxMint()": FunctionFragment;
-    "maxSupply()": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -69,6 +75,7 @@ export interface OnchainGasInterface extends utils.Interface {
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setCost(uint256)": FunctionFragment;
     "setMintActive(bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
@@ -78,19 +85,26 @@ export interface OnchainGasInterface extends utils.Interface {
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "withdraw()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "approve"
+      | "availableMint"
       | "balanceOf"
+      | "claim"
+      | "claimAndMint"
+      | "claimed"
       | "cost"
       | "explicitOwnershipOf"
       | "explicitOwnershipsOf"
       | "getApproved"
+      | "getGasPriceAtMint"
+      | "getTokenSeed"
+      | "gift"
       | "isApprovedForAll"
       | "maxMint"
-      | "maxSupply"
       | "mint"
       | "name"
       | "owner"
@@ -100,6 +114,7 @@ export interface OnchainGasInterface extends utils.Interface {
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
+      | "setCost"
       | "setMintActive"
       | "supportsInterface"
       | "symbol"
@@ -109,6 +124,7 @@ export interface OnchainGasInterface extends utils.Interface {
       | "totalSupply"
       | "transferFrom"
       | "transferOwnership"
+      | "withdraw"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -116,8 +132,24 @@ export interface OnchainGasInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "availableMint",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claim",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claimAndMint",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claimed",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "cost", values?: undefined): string;
   encodeFunctionData(
@@ -133,11 +165,22 @@ export interface OnchainGasInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getGasPriceAtMint",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenSeed",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "gift",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "maxMint", values?: undefined): string;
-  encodeFunctionData(functionFragment: "maxSupply", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mint",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -176,6 +219,10 @@ export interface OnchainGasInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCost",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMintActive",
@@ -218,9 +265,20 @@ export interface OnchainGasInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "availableMint",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "claimAndMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "claimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cost", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "explicitOwnershipOf",
@@ -235,11 +293,19 @@ export interface OnchainGasInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getGasPriceAtMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenSeed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "gift", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxSupply", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -264,6 +330,7 @@ export interface OnchainGasInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setCost", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setMintActive",
     data: BytesLike
@@ -294,6 +361,7 @@ export interface OnchainGasInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
@@ -372,12 +440,12 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface OnchainGas extends BaseContract {
+export interface OnchainCheckGas extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: OnchainGasInterface;
+  interface: OnchainCheckGasInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -405,10 +473,31 @@ export interface OnchainGas extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    availableMint(
+      to: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    claim(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    claimAndMint(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      mintAmount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    claimed(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     cost(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -427,6 +516,22 @@ export interface OnchainGas extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getGasPriceAtMint(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
+    getTokenSeed(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    gift(
+      to: PromiseOrValue<string>,
+      mintAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -435,12 +540,10 @@ export interface OnchainGas extends BaseContract {
 
     maxMint(overrides?: CallOverrides): Promise<[number]>;
 
-    maxSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     mint(
       to: PromiseOrValue<string>,
       mintAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
@@ -476,6 +579,11 @@ export interface OnchainGas extends BaseContract {
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setCost(
+      _newCost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -521,6 +629,10 @@ export interface OnchainGas extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    withdraw(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   approve(
@@ -529,10 +641,31 @@ export interface OnchainGas extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  availableMint(
+    to: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   balanceOf(
     owner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  claim(
+    tokenIds: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  claimAndMint(
+    tokenIds: PromiseOrValue<BigNumberish>[],
+    mintAmount: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  claimed(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   cost(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -551,6 +684,22 @@ export interface OnchainGas extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getGasPriceAtMint(
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
+  getTokenSeed(
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  gift(
+    to: PromiseOrValue<string>,
+    mintAmount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   isApprovedForAll(
     owner: PromiseOrValue<string>,
     operator: PromiseOrValue<string>,
@@ -559,12 +708,10 @@ export interface OnchainGas extends BaseContract {
 
   maxMint(overrides?: CallOverrides): Promise<number>;
 
-  maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
   mint(
     to: PromiseOrValue<string>,
     mintAmount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
@@ -600,6 +747,11 @@ export interface OnchainGas extends BaseContract {
   setApprovalForAll(
     operator: PromiseOrValue<string>,
     approved: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setCost(
+    _newCost: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -646,6 +798,10 @@ export interface OnchainGas extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  withdraw(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     approve(
       to: PromiseOrValue<string>,
@@ -653,10 +809,31 @@ export interface OnchainGas extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    availableMint(
+      to: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    claim(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    claimAndMint(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      mintAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    claimed(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     cost(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -675,6 +852,22 @@ export interface OnchainGas extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getGasPriceAtMint(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    getTokenSeed(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    gift(
+      to: PromiseOrValue<string>,
+      mintAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -682,8 +875,6 @@ export interface OnchainGas extends BaseContract {
     ): Promise<boolean>;
 
     maxMint(overrides?: CallOverrides): Promise<number>;
-
-    maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     mint(
       to: PromiseOrValue<string>,
@@ -722,6 +913,11 @@ export interface OnchainGas extends BaseContract {
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setCost(
+      _newCost: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -767,6 +963,8 @@ export interface OnchainGas extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    withdraw(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -833,8 +1031,29 @@ export interface OnchainGas extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    availableMint(
+      to: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    claim(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    claimAndMint(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      mintAmount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    claimed(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -855,6 +1074,22 @@ export interface OnchainGas extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getGasPriceAtMint(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokenSeed(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    gift(
+      to: PromiseOrValue<string>,
+      mintAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -863,12 +1098,10 @@ export interface OnchainGas extends BaseContract {
 
     maxMint(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
     mint(
       to: PromiseOrValue<string>,
       mintAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -904,6 +1137,11 @@ export interface OnchainGas extends BaseContract {
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setCost(
+      _newCost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -949,6 +1187,10 @@ export interface OnchainGas extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    withdraw(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -958,8 +1200,29 @@ export interface OnchainGas extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    availableMint(
+      to: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    claim(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    claimAndMint(
+      tokenIds: PromiseOrValue<BigNumberish>[],
+      mintAmount: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    claimed(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -980,6 +1243,22 @@ export interface OnchainGas extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getGasPriceAtMint(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokenSeed(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    gift(
+      to: PromiseOrValue<string>,
+      mintAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -988,12 +1267,10 @@ export interface OnchainGas extends BaseContract {
 
     maxMint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    maxSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     mint(
       to: PromiseOrValue<string>,
       mintAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1029,6 +1306,11 @@ export interface OnchainGas extends BaseContract {
     setApprovalForAll(
       operator: PromiseOrValue<string>,
       approved: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCost(
+      _newCost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1072,6 +1354,10 @@ export interface OnchainGas extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

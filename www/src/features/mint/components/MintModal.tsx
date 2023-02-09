@@ -15,6 +15,7 @@ import { utils } from "ethers";
 import { SendTransactionResult } from "@wagmi/core";
 import { blockchainExplorerUrl } from "utils/config";
 import { TweetMint } from "./TweetMint";
+import { TweetCheck } from "./TweetCheck";
 import CardActions from "@mui/material/CardActions";
 
 interface IProps {
@@ -23,6 +24,7 @@ interface IProps {
   isLoading: boolean;
   isSuccess: boolean;
   handleClose: () => void;
+  isCheck?: boolean;
 }
 
 export const MintModal: FC<IProps> = ({
@@ -31,6 +33,7 @@ export const MintModal: FC<IProps> = ({
   handleClose,
   isLoading,
   isSuccess,
+  isCheck,
 }) => {
   const [verified, setVerified] = useState(false);
   useEffect(() => {
@@ -124,7 +127,9 @@ export const MintModal: FC<IProps> = ({
                 )}
               </Box>
             </CardContent>
-            <CardActions>{result?.hash && <TweetMint />}</CardActions>
+            <CardActions>
+              {result?.hash && (isCheck ? <TweetCheck /> : <TweetMint />)}
+            </CardActions>
           </Card>
         </Box>
       </Fade>

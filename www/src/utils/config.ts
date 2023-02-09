@@ -19,12 +19,21 @@ export const appName = {
   },
 };
 
-export const nftContractAddress = {
+export const nftOnChainGasContractAddress = {
   get() {
     if (!process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS) {
       throw new Error("NEXT_PUBLIC_NFT_CONTRACT_ADDRESS not set");
     }
     return process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
+  },
+};
+
+export const nftOnChainCheckContractAddress = {
+  get() {
+    if (!process.env.NEXT_PUBLIC_NFT_CHECK_CONTRACT_ADDRESS) {
+      throw new Error("NEXT_PUBLIC_NFT_CHECK_CONTRACT_ADDRESS not set");
+    }
+    return process.env.NEXT_PUBLIC_NFT_CHECK_CONTRACT_ADDRESS;
   },
 };
 

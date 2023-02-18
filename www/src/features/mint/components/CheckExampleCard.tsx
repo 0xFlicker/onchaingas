@@ -18,7 +18,7 @@ import { Box, Typography } from "@mui/material";
 export const ExampleCard: FC = () => {
   const [isLive, setIsLive] = useState(false);
   const [lastSetValue, setLastSetValue] = useState(10);
-  const { setLiveUpdate, setGas, setElement, cleanup } = useMemo(
+  const { setLiveUpdate, setGas, setElement, cleanup, setMintGas } = useMemo(
     () => (exampleRender as any)(),
     []
   );
@@ -28,6 +28,12 @@ export const ExampleCard: FC = () => {
       setGas(value);
     },
     [setGas]
+  );
+  const onMintSliderUpdate = useCallback(
+    (e: unknown, value: any) => {
+      setMintGas(value);
+    },
+    [setMintGas]
   );
   const onCheckChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -66,6 +72,14 @@ export const ExampleCard: FC = () => {
             max={500}
             step={1}
             disabled={isLive}
+          />
+          <Slider
+            defaultValue={10}
+            aria-label="Mint Gas"
+            onChange={onMintSliderUpdate}
+            min={0}
+            max={500}
+            step={1}
           />
         </CardContent>
       </Card>

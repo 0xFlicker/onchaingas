@@ -153,6 +153,14 @@ export const ClaimCard: FC = () => {
     },
   });
 
+  const { config: claimOnlyConfig } = usePrepareContractWrite({
+    addressOrName: nftOnChainCheckContractAddress.get(),
+    contractInterface: checkAbi,
+    functionName: "claim",
+    args: [availableClaims],
+    enabled: availableClaims.length > 0,
+  });
+
   const {
     data: claimMintData,
     isLoading: claimMintIsLoading,
@@ -167,30 +175,59 @@ export const ClaimCard: FC = () => {
     write: mintOnlyWrite,
   } = useContractWrite(mintConfig);
 
-  const mintWrite = availableClaims.length ? claimMintWrite : mintOnlyWrite;
-  const mintIsLoading = availableClaims.length
-    ? claimMintIsLoading
-    : mintOnlyIsLoading;
-  const mintIsSuccess = availableClaims.length
-    ? claimMintIsSuccess
-    : mintOnlyIsSuccess;
-  const mintData = availableClaims.length ? claimMintData : mintOnlyData;
+  const {
+    data: claimOnlyData,
+    isLoading: claimOnlyIsLoading,
+    isSuccess: claimOnlyIsSuccess,
+    write: claimOnlyWrite,
+  } = useContractWrite(claimOnlyConfig);
 
   let description = "";
   if (publicSaleActive) {
     description = `You currently have ${balanceOf} tokens.`;
   } else {
-    description = "The mint is not active yet.";
+    description = "The mint is now closed.";
   }
   if (availableClaims.length) {
     description += ` You have ${availableClaims.length} available claims from OnChainGas.`;
   }
   const canMint = publicSaleActive && availableMint > 0;
   const willOverAllocate =
-    connected && publicSaleActive && mintAmount > availableMint;
+    connected &&
+    publicSaleActive &&
+    mintAmount > availableMint &&
+    availableClaims.length === 0;
   const willExceedMaxMint =
-    connected && publicSaleActive && availableMint > maxMint;
-  const allMinted = connected && publicSaleActive && availableMint === 0;
+    connected &&
+    publicSaleActive &&
+    availableMint > maxMint &&
+    availableClaims.length === 0;
+  const allMinted =
+    connected &&
+    publicSaleActive &&
+    availableMint === 0 &&
+    availableClaims.length === 0;
+
+  const mintWrite = availableClaims.length
+    ? canMint
+      ? claimMintWrite
+      : claimOnlyWrite
+    : mintOnlyWrite;
+  const mintIsLoading = availableClaims.length
+    ? canMint
+      ? claimMintIsLoading
+      : claimOnlyIsLoading
+    : mintOnlyIsLoading;
+  const mintIsSuccess = availableClaims.length
+    ? canMint
+      ? claimMintIsSuccess
+      : claimOnlyIsSuccess
+    : mintOnlyIsSuccess;
+  const mintData = availableClaims.length
+    ? canMint
+      ? claimMintData
+      : claimOnlyData
+    : mintOnlyData;
 
   const dispatch = useAppDispatch();
   const doConnect = useCallback(() => {
@@ -273,13 +310,17 @@ export const ClaimCard: FC = () => {
                         availableClaims.length
                       } token${availableClaims.length > 1 ? "s" : ""} for free)`
                     : "")
+              : availableClaims.length
+              ? `Claim ${availableClaims.length} token${
+                  availableClaims.length > 1 ? "s" : ""
+                }`
               : ""}
           </Typography>
-          {connected && availableMint === 0 && (
+          {connected && availableMint === 0 && availableClaims.length === 0 && (
             <Typography>Thank you for your support</Typography>
           )}
           <Box maxWidth="sm" marginLeft={4}>
-            {((canMint && availableMint > 1) || availableClaims.length > 0) && (
+            {canMint && availableMint > 1 && (
               <Slider
                 aria-label="Mint amount"
                 value={mintAmount}
@@ -305,7 +346,15 @@ export const ClaimCard: FC = () => {
               Mint
             </Button>
           )}
-          {connected && availableMint === 0 && <TweetCheck />}
+          {connected && !canMint && availableClaims.length > 0 && (
+            <Button size="small" onClick={mint}>
+              Claim
+            </Button>
+          )}
+          {connected &&
+            (availableMint === 0 || availableClaims.length == 0) && (
+              <TweetCheck />
+            )}
         </CardActions>
       </Card>
     </>

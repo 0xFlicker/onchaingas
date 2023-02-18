@@ -2,30 +2,27 @@ import { ethers } from "hardhat";
 import { expect } from "chai";
 import fs from "fs";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { userMint } from "./utils";
+import {
+  StaticContractAddresses,
+  staticContracts,
+  upgradeRenderer,
+  userMint,
+} from "./utils";
 import { OnchainGas__factory } from "../typechain";
 import { utils } from "ethers";
 
 describe("Render test", function () {
   let accounts: SignerWithAddress[];
+  let staticContractAddresses: StaticContractAddresses;
   this.beforeAll(async () => {
     accounts = await ethers.getSigners();
-  });
-
-  it.only("uint2str", async () => {
-    const { mintContract, rendererContract, owner, user, oldNft } =
-      await userMint(accounts);
-    expect((await rendererContract.testUint2str3(0)).toNumber()).to.equal(0);
-    const userMintContract = mintContract.connect(user);
-    await userMintContract.mint(user.address, 10, {
-      value: ethers.utils.parseEther("1"),
-    });
-    console.log(await mintContract.tokenURI("9"));
+    staticContractAddresses = await staticContracts(accounts[0]);
   });
 
   it("generates an svg", async () => {
     const { mintContract, rendererContract, owner, user } = await userMint(
-      accounts
+      accounts,
+      staticContractAddresses
     );
     // generate a random uint256
     const seed = utils.randomBytes(32);
@@ -34,5 +31,24 @@ describe("Render test", function () {
       "example.svg",
       await rendererContract.generateSvg(seed, gasPrice)
     );
+  });
+
+  describe("v2", () => {
+    it("tokenURI", async () => {
+      const { mintContract, rendererContract, owner, user } = await userMint(
+        accounts,
+        staticContractAddresses
+      );
+
+      const metadata = await mintContract.tokenURI(1);
+
+      await upgradeRenderer({
+        owner,
+        rendererContract,
+        staticContractAddresses,
+      });
+
+      expect(await mintContract.tokenURI(1)).to.equal(metadata);
+    });
   });
 });

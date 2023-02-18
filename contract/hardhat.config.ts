@@ -9,9 +9,30 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import { node_url, accounts, addForkConfiguration } from "./utils/network";
-import { utils } from "ethers";
-
+import { BigNumber, utils } from "ethers";
+import { OnchainCheckGas__factory, OnchainGas__factory } from "./typechain";
 dotenv.config();
+
+task("claims", "count the number of claims remaining", async (args, hre) => {
+  const onChainGas = OnchainGas__factory.connect(
+    "0x25Ec84aBe25174650220b83841E0cfB39D8Aab87",
+    hre.ethers.provider
+  );
+  const onChainCheckGas = OnchainCheckGas__factory.connect(
+    "0x9489bB7Ba72Dc427D559956008e3F3aE84897D5D",
+    hre.ethers.provider
+  );
+
+  const totalSupply = (await onChainGas.totalSupply()).toNumber();
+  let totalClaims = 0;
+  for (let i = 1; i <= totalSupply; i++) {
+    const claim = await onChainCheckGas.claimed(i);
+    if (claim) {
+      totalClaims++;
+    }
+  }
+  console.log("totalClaims", totalClaims);
+});
 
 const config: HardhatUserConfig = {
   solidity: {

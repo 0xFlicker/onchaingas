@@ -45,7 +45,7 @@ contract OnchainCheckRenderer is IMetaDataURI, Ownable {
   function setUpgradeContract(address _upgradeContract) public onlyOwner {
     upgradeContract = IMetaDataURI(_upgradeContract);
   }
-
+  
   function tokenURI(uint256 tokenId, uint256 seed, uint24 gasPrice)
     public
     view

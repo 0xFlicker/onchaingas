@@ -26,6 +26,28 @@ module.exports = function () {
   let rpc = "https://mainnet.infura.io/v3/382301aaaf3f4060bdefdbd132ae3c8f";
   let liveUpdate = false;
   let l;
+
+  let mintGasPrice = 10;
+  const maxColor = new THREE.Color(0xff4d40);
+  const minColor = new THREE.Color(0x1dff10);
+  
+  // Default color at mintGasPrice = 0x1d9bf0
+  // at 0 gasPrice, color = 0x1dfff0
+  // between 0 and mintGasPrice, color = 0x1d9bf0 -> 0x1dfff0
+  // at >1000 gasPrice, color = 0xff9bf0;
+  // between 1000 and mintGasPrice, color = 0x1d9bf0 -> 0xff9bf0
+  const getGasColor = () => {
+  const maxGasPrice = mintGasPrice + 100;
+    const mintColor = new THREE.Color(0x1d9bf0);
+    if (gasPrice > mintGasPrice) {
+      // lerp from mintColor to maxColor between mintGasePrice and maxGasPrice
+      return mintColor.lerp(maxColor, (gasPrice - mintGasPrice) / (maxGasPrice - mintGasPrice));
+    } else if (gasPrice < mintGasPrice) {
+      // lerp from mintColor to minColor between gasPrice and 0
+      return mintColor.lerp(minColor, 1 - gasPrice / mintGasPrice);
+    }
+    return mintColor;
+  }
   const tokenId = 0;
   let updateCount = 240;
   function setLiveUpdate(value) {
@@ -35,6 +57,9 @@ module.exports = function () {
   function setGas(value) {
     gasPrice = value
   }
+  function setMintGas(value) {
+    mintGasPrice = value;
+  }
   function setElement(ref) {
     if (!ref) return;
     element = ref;
@@ -43,7 +68,13 @@ module.exports = function () {
     gasPriceElement.style =
       "position: absolute; top: 10; right: 10; color: white";
     gasPriceElement.innerText = `Gas price: ${gasPrice} gwei`;
-    element.appendChild(gasPriceElement);
+    // element.appendChild(gasPriceElement);
+
+    const mintGasPriceElement = document.createElement("div");
+    mintGasPriceElement.style =
+      "position: absolute; top: 20; right: 10; color: white";
+    mintGasPriceElement.innerText = `Minted at gas: ${mintGasPrice} gwei`;
+    element.appendChild(mintGasPriceElement);
     const o = (o) => (
       void 0 !== o && (l = o % 2147483647) <= 0 && (l += 2147483646),
       ((l = (16807 * l) % 2147483647) - 1) / 2147483646
@@ -99,7 +130,6 @@ module.exports = function () {
     gasSpigot.position.set(0, gasHeight / 2, 0);
     scene.add(gasSpigot);
 
-    const GAS_PARTICLE_SIZE = 20;
     let particles = [];
     const reusableParticle = svgThreeObject(renderOneCheckMark('#1d9bf0'));
     function addGasParticle() {
@@ -153,8 +183,9 @@ module.exports = function () {
 
     function nextStep() {
       requestAnimationFrame(nextStep);
+      reusableParticle.material.color = getGasColor();
       if (liveUpdate && updateCount-- < 0) {
-        updateCount = 240;
+        updateCount = 480;
         fetch(rpc, {
           method: "POST",
           body: JSON.stringify({
@@ -187,6 +218,7 @@ module.exports = function () {
         priorGasPrice = gasPrice;
         gasPriceElement.innerText = `Gas price: ${gasPrice} gwei`;
       }
+      mintGasPriceElement.innerText = `Mint gas price: ${mintGasPrice} gwei`;
 
       (camera.position.y += 0.05 * (200 - pointerY - camera.position.y)),
         (scene.rotation.y -= 0.005),
@@ -246,5 +278,5 @@ module.exports = function () {
   function cleanup() {
     window.removeEventListener('resize', resizer);
   }
-  return { setGas, setElement, cleanup, setLiveUpdate };
+  return { setGas, setElement, cleanup, setLiveUpdate, setMintGas };
 }

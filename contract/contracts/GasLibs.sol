@@ -1,9 +1,34 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.17;
 
 
 library GasLibs {
   uint256 constant MAX_MINT_GAS_PRICE = 1000000; // 1000 gwei mint would show all checks
+
+  /**
+   * @dev depending on seed, provide a max delta for color changes
+   * 25% chance of a 50 delta
+   * 25% chance of a 35 delta
+   * 25% chance of a 25 delta
+   * 15% chance of a 15 delta
+   * 10% chance of a 5 delta 
+   */
+  function getMaxDelta(uint256 seed) public pure returns (uint8) {
+    uint8 multiplier = 1;
+    uint8 random = uint8((seed >> 128) % 100);
+    if (random < 25) {
+      multiplier = 50;
+    } else if (random < 50) {
+      multiplier = 35;
+    } else if (random < 75) {
+      multiplier = 25;
+    } else if (random < 90) {
+      multiplier = 15;
+    } else {
+      multiplier = 5;
+    }
+    return multiplier;
+  }
 
   /**
    * @dev depending on seed, provide a boost to the gas price
@@ -13,7 +38,7 @@ library GasLibs {
    * 15% chance of a 4x multiplier
    * 10% chance of a 5x multiplier 
    */
-  function getGasPriceMultiplier(uint256 seed) internal pure returns (uint8) {
+  function getGasPriceMultiplier(uint256 seed) public pure returns (uint8) {
     uint8 multiplier = 1;
     uint8 random = uint8(seed % 100);
     if (random < 25) {
@@ -30,7 +55,7 @@ library GasLibs {
     return multiplier;
   }
 
-  function getNumberOfCheckMarks(bool[80] memory isCheckMarkRenderer) internal pure returns (uint8) {
+  function getNumberOfCheckMarks(bool[80] memory isCheckMarkRenderer) public pure returns (uint8) {
     uint8 count = 0;
     for (uint8 i = 0; i < 80; i++) {
       if (isCheckMarkRenderer[i]) {
@@ -51,7 +76,7 @@ library GasLibs {
     return boostedGasPrice > (uint24(seed >> index) % MAX_MINT_GAS_PRICE);
   }
 
-  function getIsCheckRendered(uint256 seed, uint24 gasPrice) internal pure returns (bool[80] memory) {
+  function getIsCheckRendered(uint256 seed, uint24 gasPrice) public pure returns (bool[80] memory) {
     bool[80] memory isCheckRendered;
     uint24 boostedGasPrice = gasPrice * getGasPriceMultiplier(seed);
     for (uint8 i = 0; i < 80; i++) {
@@ -76,7 +101,7 @@ library GasLibs {
 
   // via https://stackoverflow.com/a/65707309
   function uint2str(uint256 _i)
-    internal
+    public
     pure
     returns (string memory _uintAsString)
   {
@@ -102,7 +127,7 @@ library GasLibs {
   }
 
   function uint2hex(uint256 _i)
-    internal
+    public
     pure
     returns (string memory _uintAsHexString)
   {
@@ -130,7 +155,7 @@ library GasLibs {
     return string(bstr);
   }
 
-  function leftPad(string memory str, uint256 length) internal pure returns (string memory) {
+  function leftPad(string memory str, uint256 length) public pure returns (string memory) {
     bytes memory strBytes = bytes(str);
     bytes memory paddedBytes = new bytes(length);
     for (uint256 i = 0; i < length; i++) {

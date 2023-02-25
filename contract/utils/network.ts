@@ -5,6 +5,17 @@ import {
   NetworksUserConfig,
 } from "hardhat/types";
 
+export function gasRpc(networkName: string): string {
+  if (networkName) {
+    const name = process.env[`GAS_RPC_${networkName.toUpperCase()}`];
+    if (name && name !== "") {
+      console.log("Using gas rpc from env: ", name);
+      return name;
+    }
+  }
+  return "TEST";
+}
+
 export function ens_signer(networkName: string): string {
   if (networkName) {
     const name =

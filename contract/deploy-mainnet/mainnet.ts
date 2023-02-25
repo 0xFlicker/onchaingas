@@ -2,12 +2,13 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Wallet } from "ethers";
 import { OnchainCheckRenderer__factory } from "../typechain";
+import { gasRpc } from "../utils/network";
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network, run, ethers } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-
+  const rpc = gasRpc(network.name);
   const rendererArgs = [
     "0xeC8EF4c339508224E063e43e30E2dCBe19D9c087",
     "0xA32bb79b33B29e483d0949C99EC0C439b29e2B33",
@@ -50,9 +51,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       renderer.address,
       ownerSigner
     );
-    await rendererContract.setRpc(
-      "https://mainnet.infura.io/v3/382301aaaf3f4060bdefdbd132ae3c8f"
-    );
+    await rendererContract.setRpc(rpc);
   }
 };
 export default func;

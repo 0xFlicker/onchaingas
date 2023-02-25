@@ -8,23 +8,24 @@ window.onload = () => {
   const maxColor = new THREE.Color(0xff4d40);
   const minColor = new THREE.Color(0x1dff10);
   
-  // Default color at mintGasPrice = 0x1d9bf0
+  // Default color at baselineGasPrice = 0x1d9bf0
   // at 0 gasPrice, color = 0x1dfff0
-  // between 0 and mintGasPrice, color = 0x1d9bf0 -> 0x1dfff0
+  // between 0 and baselineGasPrice, color = 0x1d9bf0 -> 0x1dfff0
   // at >1000 gasPrice, color = 0xff9bf0;
-  // between 1000 and mintGasPrice, color = 0x1d9bf0 -> 0xff9bf0
+  // between 1000 and baselineGasPrice, color = 0x1d9bf0 -> 0xff9bf0
   const getGasColor = () => {
-    const maxGasPrice = mintGasPrice + 100;
-      const mintColor = new THREE.Color(0x1d9bf0);
-      if (gasPrice > mintGasPrice) {
-        // lerp from mintColor to maxColor between mintGasePrice and maxGasPrice
-        return mintColor.lerp(maxColor, (gasPrice - mintGasPrice) / (maxGasPrice - mintGasPrice));
-      } else if (gasPrice < mintGasPrice) {
-        // lerp from mintColor to minColor between gasPrice and 0
-        return mintColor.lerp(minColor, 1 - gasPrice / mintGasPrice);
-      }
-      return mintColor;
+    const maxGasPrice = baselineGasPrice + maxDelta;
+    const minGasPrice = Math.max(baselineGasPrice - maxDelta, 0);
+    const mintColor = new THREE.Color(0x1d9bf0);
+    if (gasPrice > baselineGasPrice) {
+      // lerp from mintColor to maxColor between mintGasePrice and maxGasPrice
+      return mintColor.lerp(maxColor, (gasPrice - baselineGasPrice) / (maxGasPrice - baselineGasPrice));
+    } else if (gasPrice < baselineGasPrice) {
+      // lerp from mintColor to minColor between gasPrice and mintGasPrice
+      return mintColor.lerp(minColor, 1 - (gasPrice - minGasPrice) / (baselineGasPrice - minGasPrice));
     }
+    return mintColor;
+  }
   const renderOneCheckMark = (fill) => `<?xml version="1.0" encoding="UTF-8"?>
 <svg version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 <g fill="${fill}">
@@ -184,7 +185,7 @@ window.onload = () => {
     requestAnimationFrame(nextStep);
 
     reusableParticle.material.color = getGasColor();
-    
+
     if (liveUpdate && updateCount-- < 0) {
       updateCount = 240;
       fetch(rpc, {

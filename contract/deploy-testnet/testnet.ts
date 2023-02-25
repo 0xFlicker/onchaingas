@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import fs from "fs";
 import { DeployFunction } from "hardhat-deploy/types";
+import { gasRpc } from "../utils/network";
 import {
   OnchainCheckgas__factory,
   OnchainCheckRenderer__factory,
@@ -11,6 +12,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network, run, ethers } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
+  const rpc = gasRpc(network.name);
   let currentNonce = await ethers.provider.getTransactionCount(deployer);
   const [ff1Deployed, ff2Deployed] = await Promise.all([
     deploy("FFlateDataChunk1", {
@@ -170,9 +172,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       ownerSigner
     );
     console.log("Setting RPC URL");
-    await rendererContract.setRpc(
-      "https://mainnet.infura.io/v3/382301aaaf3f4060bdefdbd132ae3c8f"
-    );
+    await rendererContract.setRpc(rpc);
     console.log("Enabling mint");
 
     const activeReceipt = await nftContract.setMintActive(true);

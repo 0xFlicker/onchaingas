@@ -9,7 +9,7 @@ import { InfoCard } from "features/mint/components/InfoCard";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 
-export const Home: FC = () => {
+export const Gas: FC = () => {
   return (
     <Main
       title="Onchain Gas NFT"

@@ -1,5 +1,7 @@
-import { allChains, chain, Chain } from "wagmi";
+import { Chain, mainnet, goerli, sepolia } from "@wagmi/chains";
 import { lazySingleton } from "utils/factory";
+
+export const supportedAppChains = [mainnet, goerli, sepolia] as const;
 
 export const infuraKey = {
   get() {
@@ -47,20 +49,7 @@ export const blockchainExplorerUrl = {
 };
 
 export const supportedChains = lazySingleton(() => {
-  if (!process.env.NEXT_PUBLIC_SUPPORTED_CHAINS) {
-    throw new Error("SUPPORTED_CHAINS is not set");
-  }
-  const supportedChainNames: keyof typeof chain = JSON.parse(
-    process.env.NEXT_PUBLIC_SUPPORTED_CHAINS
-  );
-  const chains: Chain[] = [];
-  for (const chainName of supportedChainNames) {
-    const wagmiChain = allChains.find(({ network }) => network === chainName);
-    if (wagmiChain) {
-      chains.push(wagmiChain);
-    }
-  }
-  return chains;
+  return supportedAppChains;
 });
 
 export const defaultChain = lazySingleton(() => {
@@ -68,6 +57,8 @@ export const defaultChain = lazySingleton(() => {
     throw new Error("NEXT_PUBLIC_DEFAULT_CHAIN_ID is not set");
   }
   const chainId = process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID;
-  const wagmiChain = allChains.find(({ id }) => id === Number(chainId));
+  const wagmiChain = supportedChains
+    .get()
+    .find(({ id }) => id === Number(chainId));
   return wagmiChain;
 });

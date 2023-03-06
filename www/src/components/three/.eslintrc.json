@@ -1,0 +1,6 @@
+{
+  "extends": "../../../.eslintrc.json",
+  "rules": {
+    "react/no-unknown-property": "off"
+  }
+}

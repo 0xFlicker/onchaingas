@@ -47,6 +47,7 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   namedAccounts: {
     deployer: 0,
+    signer: 10,
   },
   networks: addForkConfiguration({
     hardhat: {
@@ -77,6 +78,13 @@ const config: HardhatUserConfig = {
       deploy: ["deploy-testnet/"],
       tags: ["testnet"],
     },
+    // for testnet
+    "base-goerli": {
+      url: "https://goerli.base.org",
+      accounts: accounts("base-goerli"),
+      deploy: ["deploy-base-goerli/"],
+      tags: ["testnet"],
+    },
   }),
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
@@ -90,7 +98,18 @@ const config: HardhatUserConfig = {
       mainnet: process.env.ETHERSCAN_API_KEY_MAINNET || "",
       goerli: process.env.ETHERSCAN_API_KEY_GOERLI || "",
       sepolia: process.env.ETHERSCAN_API_KEY_SEPOLIA || "",
+      ["base-goerli"]: process.env.ETHERSCAN_API_KEY_BASE_GOERLI || " ",
     },
+    customChains: [
+      {
+        network: "base-goerli",
+        chainId: 84531,
+        urls: {
+          apiURL: "https://api-goerli.basescan.org/api",
+          browserURL: "https://goerli.basescan.org",
+        },
+      },
+    ],
   },
   typechain: {
     outDir: "typechain",

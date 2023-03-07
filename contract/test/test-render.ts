@@ -8,7 +8,10 @@ import {
   upgradeRenderer,
   userMint,
 } from "./utils";
-import { OnchainGas__factory } from "../typechain";
+import {
+  GasLibs__factory,
+  OnChainBaseRendererV2Image__factory,
+} from "../typechain";
 import { utils } from "ethers";
 
 describe("Render test", function () {
@@ -17,6 +20,25 @@ describe("Render test", function () {
   this.beforeAll(async () => {
     accounts = await ethers.getSigners();
     staticContractAddresses = await staticContracts(accounts[0]);
+  });
+
+  it("base - generate an svg", async () => {
+    const [owner] = accounts;
+    const gasLibFactory = new GasLibs__factory(owner);
+    const gasLib = await gasLibFactory.deploy();
+    // Create v2 renderer, image and animationURL
+    const imageRendererFactory = new OnChainBaseRendererV2Image__factory(
+      { "contracts/GasLibs.sol:GasLibs": gasLib.address },
+      owner
+    );
+    const imageRenderer = await imageRendererFactory.deploy();
+    const seed = utils.randomBytes(32);
+    const gasPrice = 512123;
+    const isCheckRendered = await gasLib.getIsCheckRendered(seed, gasPrice);
+    fs.writeFileSync(
+      "example.svg",
+      await imageRenderer.generateSvg(seed, isCheckRendered)
+    );
   });
 
   it("generates an svg", async () => {
@@ -45,6 +67,7 @@ describe("Render test", function () {
       await upgradeRenderer({
         owner,
         rendererContract,
+        nftContract: mintContract.address,
         staticContractAddresses,
       });
 

@@ -53,17 +53,65 @@ export const gridShader: ShaderMaterialParameters = {
     
       vec2 outsideRect = abs(fract(vUv.xy - 0.5) - 0.5) / fwidth(vUv.xy);
       vec2 v = mod(coord, spacing);
-      vec2 grid = abs(fract(v - 0.5) - 0.5) / fwidth(v);
+      vec2 v2 = mod(-coord, spacing);
+      // there are two different grids to calculate the distance to, effectively a "right" and "left"
+      // We need to find the distance to both so that we can calculate the glow correctly
+      vec2 gridLeft = abs(fract(v.xy - 0.5) - 0.5) / fwidth(v.xy);
+      // vec2 gridLeft = v;
+      vec2 gridRight = abs(fract(v2.xy - 0.5) - 0.5) / fwidth(v2.xy);
       
-      float line = 1.0 - min(min(grid.x, grid.y), min(outsideRect.x, outsideRect.y));
-      
-      float edge = smoothstep(0.0, 1.0, (line - width) / glow);
-      // float glowValue = smoothstep(0.0, glow, line) / smoothstep(0.0, 1.0, line) - edge;
-      
-      float alpha = edge;
-      
+      // float distanceToGrid = distance(grid, coord);
+      // float distanceToOutsideRect = distance(outsideRect, coord);
+      // float line = min(
+      //   min(gridLeft.x, gridLeft.y), 
+      //   min(outsideRect.x, outsideRect.y)
+      // );
+      float line = min(
+        min(gridRight.x, gridRight.y),
+        min(
+          min(gridLeft.x, gridLeft.y),
+          min(outsideRect.x, outsideRect.y)
+        )
+      );
+      // float line = 1.0 - min(distanceToGrid, distanceToOutsideRect);
+      // now apply glow
+      float alpha = smoothstep(1.0, 0.0, (line - width) / glow);
       gl_FragColor = vec4(vec3(color), opacity * alpha);
+
+      // if (line < width) {
+      //   gl_FragColor = vec4(vec3(color), opacity);
+      // } else {
+       
+      //   // now apply glow
+      //   float alpha = smoothstep(1.0, 0.0, line / glow);
+      //   gl_FragColor = vec4(vec3(color), opacity * alpha);
+      // }
+
     }
     
   `,
 };
+
+// ignore
+// float edge = smoothstep(0.0, 1.0, (line - width)  / width);
+// // now apply a glow
+
+// // float glowValue = smoothstep(0.0, glow, line) / smoothstep(0.0, 1.0, line) - edge;
+
+// float alpha = edge;
+
+// save
+// // there are two different grids to calculate the distance to, effectively a "right" and "left"
+// // We need to find the distance to both so that we can calculate the glow correctly
+// vec2 gridLeft = abs(fract(v - 0.5) - 0.5) / fwidth(v);
+// vec2 gridRight = abs(fract(v + 0.5) - 0.5) / fwidth(v);
+
+// // float distanceToGrid = distance(grid, coord);
+// // float distanceToOutsideRect = distance(outsideRect, coord);
+// float line = min(
+//   min(gridRight.x, gridRight.y),
+//   min(
+//     min(gridLeft.x, gridLeft.y),
+//     min(outsideRect.x, outsideRect.y)
+//   )
+// );

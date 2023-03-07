@@ -113,10 +113,12 @@ export async function staticContracts(owner: SignerWithAddress) {
 export async function upgradeRenderer({
   rendererContract,
   owner,
+  nftContract,
   staticContractAddresses,
 }: {
   rendererContract: OnchainCheckRenderer;
   owner: SignerWithAddress;
+  nftContract: string;
   staticContractAddresses: StaticContractAddresses;
 }) {
   // compiler and threejs...
@@ -134,11 +136,15 @@ export async function upgradeRenderer({
       { "contracts/GasLibs.sol:GasLibs": gasLib.address },
       owner
     );
-  const animationUrlRenderer = await animationUrlRendererFactory.deploy(
-    ...staticContractAddresses
-  );
+  const animationUrlRenderer = await animationUrlRendererFactory.deploy([
+    ...staticContractAddresses,
+    nftContract,
+  ]);
 
   const metadataRendererFactory = new OnchainCheckRendererV2Metadata__factory(
+    {
+      "contracts/GasLibs.sol:GasLibs": gasLib.address,
+    },
     owner
   );
   const metadataRenderer = await metadataRendererFactory.deploy(

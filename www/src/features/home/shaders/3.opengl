@@ -1,0 +1,126 @@
+precision mediump float;
+
+
+float hash(uint n) {
+    return fract(sin(float(n) * 43758.5453));
+}
+
+
+float hash(float n) {
+    return fract(sin(float(n) * 43758.5453));
+}
+
+float valueNoise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = smoothstep(0.0, 1.0, f);
+
+    float a = hash(dot(i, vec2(1.0, 157.0)));
+    float b = hash(dot(i + vec2(1.0, 0.0), vec2(1.0, 211.0)));
+    float c = hash(dot(i + vec2(0.0, 1.0), vec2(1.0, 263.0)));
+    float d = hash(dot(i + vec2(1.0, 1.0), vec2(1.0, 307.0)));
+
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+float shootingStar(vec2 uv, float time, uint seed, uint staticSeed) {
+    float duration = hash(seed + 4u) * 2.0 + 0.5;
+    float waitingTime = hash(seed + 6u) * 8.0 + 4.0;
+    float offset = hash(seed + 5u) * duration;
+    float currentTime = mod(time + offset, duration + waitingTime);
+    float period = floor((time + offset) / (duration + waitingTime));
+
+    vec2 startPos = vec2(valueNoise(vec2(seed * uint(period), 0.0)) * 0.8 + 0.1, valueNoise(vec2(seed * uint(period + 1.0), 1.0)) * 0.8 + 0.1);
+    float direction = 2.0 * 3.14159265 * hash(staticSeed) + hash(seed + 1u) * 0.1 - 0.5;
+    float trailDirectionLength = hash(seed + 2u) * 0.05 + 0.5;
+    vec2 trailDirection = trailDirectionLength * vec2(cos(direction), sin(direction));
+    vec2 endPos = startPos + trailDirection;
+
+    float progress = currentTime / duration;
+    vec2 trailStart = mix(startPos, endPos, progress);
+    vec2 trailEnd = trailStart - trailDirection * 0.15;
+
+    vec2 trailDirectionNormalized = normalize(trailDirection);
+    float t = clamp(dot(uv - trailStart, trailDirectionNormalized), 0.0, length(trailDirection));
+    vec2 projectedPoint = trailStart + t * trailDirectionNormalized;
+    float distToTrail = length(uv - projectedPoint);
+
+    float trailProgress = t / length(trailDirection);
+    float trailFallIn = smoothstep(0.0, 0.1, (trailProgress - progress) * 2.0);
+    float trailFalloff = smoothstep(0.0, 0.5, trailProgress - progress);
+    float trailTransition = trailFallIn * trailFalloff;
+
+    float brightness = smoothstep(0.005, 0.0001, distToTrail) * trailTransition;
+
+    float fadeIn = smoothstep(1.0, 0.0, progress);
+    float fadeOut = smoothstep(0.5, 1.0, progress);
+    float fade = 1.0 - abs(fadeIn - fadeOut);
+
+    float isInDuration = step(currentTime, duration);
+    return brightness * fade * isInDuration;
+}
+
+vec4 starColor(float brightness) {
+    float isBrightStar = step(0.995, brightness);
+    float mixFactor = isBrightStar * (brightness - 0.995) * 1000.0 + (1.0 - isBrightStar) * brightness;
+    
+    vec3 colorA = mix(vec3(0.2, 0.2, 0.4), vec3(1.0, 1.0, 1.0), brightness);
+    vec3 colorB = mix(vec3(0.9, 0.9, 1.0), vec3(1.0, 1.0, 0.6), (brightness - 0.995) * 1000.0);
+    
+    vec3 c = mix(colorA, colorB, isBrightStar);
+    float alpha = brightness;
+
+    return vec4(c, alpha);
+}
+
+float staticStar(vec2 uv, vec2 startPos, float time, uint seed) {
+    float distToStar = length(uv - startPos);
+    
+    float starSize = hash(seed + 2u) * 0.005 + 0.0005;
+    float baseBrightness = smoothstep(starSize, 0.0, distToStar);
+
+    float pulsateFrequency = hash(seed + 3u) * 4.0 + 1.0;
+    float pulsatePhase = hash(seed + 4u) * 2.0 * 3.14159265;
+    float pulsateStrength = hash(seed + 5u) * 0.3 + 0.1;
+    float pulsate = (1.0 - pulsateStrength) + pulsateStrength * 0.5 * (1.0 + sin(time * pulsateFrequency + pulsatePhase));
+
+    return baseBrightness * pulsate;
+}
+
+vec3 blend(vec3 bg, vec4 fg) {
+    return mix(bg, fg.rgb, fg.a);
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec2 uv = fragCoord / iResolution.xy;
+    float time = iTime;
+    uint seedBase = 2000u;
+
+    vec3 color = vec3(0.0);
+
+    uint numStars = 70u;
+    uint numShootingStars = 5u;
+    uint accumulatorX = 5381u;
+    uint accumulatorY = 7919u;
+
+    // Static Stars
+    for (uint i = 0u; i < numStars; ++i) {
+        accumulatorX += (accumulatorX << 5u) + i;
+        accumulatorY += (accumulatorY << 5u) + i;
+        vec2 starPos = vec2(hash(accumulatorX + seedBase), hash(accumulatorY + seedBase));
+        color += vec3(staticStar(uv, starPos, time, i));
+    }
+
+    // Shooting Stars
+    for (uint i = numStars; i < numStars + numShootingStars; ++i) {
+        accumulatorX += (accumulatorX << 5u) + i;
+        accumulatorY += (accumulatorY << 5u) + i;
+        float brightness = shootingStar(uv, time, accumulatorX + seedBase + numStars * 2u, seedBase);
+        vec4 starCol = starColor(brightness) * 5.0;
+        color = blend(color, starCol);
+    }
+
+
+    color = clamp(color, 0.0, 1.0);
+    fragColor = vec4(color, 1.0);
+}

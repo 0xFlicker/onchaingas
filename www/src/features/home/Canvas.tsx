@@ -1,20 +1,9 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { Canvas } from "@react-three/fiber";
-import { GridTunnel } from "components/three/GridTunnel";
-import { Color, Euler, Vector3 } from "three";
+import { Content } from "./Content";
+import { ScrollControls } from "@react-three/drei";
 
 export const ThreeCanvas: FC = () => {
-  const gridColor = useMemo(() => {
-    return new Color("#00FF00");
-  }, []);
-  const tunnelPosition = useMemo(() => {
-    return new Vector3(0, -0.25, 0);
-  }, []);
-  const tunnelRotation = useMemo(() => {
-    return new Euler(0, 0, 0).setFromVector3(
-      new Vector3(0, 0, 0).sub(new Vector3(Math.PI / 18, 0, 0))
-    );
-  }, []);
   return (
     <Canvas
       camera={{ position: [0, 0, 5] }}
@@ -24,17 +13,9 @@ export const ThreeCanvas: FC = () => {
       style={{ height: "100vh", width: "100vw" }}
       frameloop="always"
     >
-      <GridTunnel
-        position={tunnelPosition}
-        rotation={tunnelRotation}
-        color={gridColor}
-        size={1}
-        opacity={1}
-        glow={5}
-        width={1.0}
-        spacing={[0.15, 0.25]}
-        speed={0.0001}
-      />
+      <ScrollControls pages={2}>
+        <Content />
+      </ScrollControls>
     </Canvas>
   );
 };

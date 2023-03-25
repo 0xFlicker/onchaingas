@@ -3,7 +3,8 @@ import { useSpring, animated } from "react-spring";
 
 interface IFadeProps {
   children?: React.ReactElement;
-  in: boolean;
+  in?: boolean;
+  duration?: number;
   onEnter?: () => {};
   onExited?: () => {};
 }
@@ -25,6 +26,9 @@ export const Fade = forwardRef<HTMLDivElement, IFadeProps>(function Fade(
       if (!open && onExited) {
         onExited();
       }
+    },
+    config: {
+      duration: props.duration ?? 500,
     },
   });
 

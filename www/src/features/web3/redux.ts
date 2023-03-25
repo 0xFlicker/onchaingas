@@ -147,12 +147,14 @@ const selectIsConnected = createSelector(
   selectWalletStatus,
   (state) => state === WalletStatus.CONNECTED
 );
-const selectAddress = createSelector(
+const selectAddress: (s: any) => undefined | `0x{string}` = createSelector(
   selectRoot,
   (state) =>
-    state.accounts &&
-    (state.accounts.length > 0 ? state.accounts[0] : undefined)
-);
+    state.accounts && state.accounts.length > 0
+      ? (state.accounts[0] as `0x${string}`)
+      : undefined
+) as any;
+
 const selectCurrentChainId = createSelector(
   selectRoot,
   (state) => state.currentChainId

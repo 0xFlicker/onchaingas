@@ -1,7 +1,11 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Content } from "./Content";
 import { ScrollControls } from "@react-three/drei";
+import { MAX_PAGE } from "./constants";
+import { ScrollProvider } from "hooks/useScroll";
+import Router from "next/router";
+import Box from "@mui/material/Box";
 
 export const ThreeCanvas: FC = () => {
   return (
@@ -13,8 +17,10 @@ export const ThreeCanvas: FC = () => {
       style={{ height: "100vh", width: "100vw" }}
       frameloop="always"
     >
-      <ScrollControls pages={2}>
-        <Content />
+      <ScrollControls pages={MAX_PAGE}>
+        <ScrollProvider pages={MAX_PAGE}>
+          <Content />
+        </ScrollProvider>
       </ScrollControls>
     </Canvas>
   );

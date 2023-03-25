@@ -46,7 +46,7 @@ export const ExampleCard: FC = () => {
   }, [cleanup]);
 
   return (
-    <>
+    <Card variant="outlined">
       <Card>
         <CardContent>
           <Box display="flex" alignItems="center" flexDirection="column">
@@ -79,6 +79,6 @@ export const ExampleCard: FC = () => {
           </Typography>
         </CardContent>
       </Card>
-    </>
+    </Card>
   );
 };

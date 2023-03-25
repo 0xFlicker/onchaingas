@@ -17,7 +17,8 @@ import Input from "@mui/material/Input";
 import { useContractRead } from "wagmi";
 import { nftOnChainCheckContractAddress } from "utils/config";
 import check from "example/check";
-import checkAbi from "../check.abi.json";
+import checkAbi from "../check.abi";
+import { BigNumber } from "ethers";
 
 export const CheckClaimCard: FC = () => {
   const [empty, setEmpty] = useState(true);
@@ -40,10 +41,10 @@ export const CheckClaimCard: FC = () => {
     isLoading: claimedLoading,
     isSuccess: claimedSuccess,
   } = useContractRead({
-    addressOrName: nftOnChainCheckContractAddress.get(),
-    contractInterface: checkAbi,
+    address: nftOnChainCheckContractAddress.get(),
+    abi: checkAbi,
     functionName: "claimed",
-    args: [tokenId],
+    args: [BigNumber.from(tokenId)],
     cacheTime: 0,
   });
   return (

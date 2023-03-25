@@ -20,15 +20,6 @@ export const Main: FC<
 > = ({ children, menu, title }) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(
-      appbarActions.setDarkMode(
-        window.matchMedia &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches
-      )
-    );
-  }, [dispatch]);
   const [height, setSize] = useState<number>(0);
 
   useEffect(() => {

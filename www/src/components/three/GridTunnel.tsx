@@ -3,8 +3,8 @@ import {
   Vector2 as FVector2,
   Euler as FEuler,
 } from "@react-three/fiber";
-import { FC, useMemo } from "react";
-import { Vector3, Euler } from "three";
+import { FC, forwardRef, RefAttributes, useMemo } from "react";
+import { Vector3, Euler, Group } from "three";
 import { GridRect } from "./GridRect";
 
 /**
@@ -14,7 +14,7 @@ import { GridRect } from "./GridRect";
  *
  */
 
-export const GridTunnel: FC<{
+type Props = {
   color: Color;
   position?: Vector3;
   rotation?: FEuler;
@@ -24,19 +24,32 @@ export const GridTunnel: FC<{
   width: number;
   spacing: FVector2;
   speed: number;
-}> = ({
-  position = new Vector3(0, 0, 0),
-  rotation = new Euler(0, 0, 0),
-  scale = new Vector3(1, 1, 1),
-  color,
-  opacity,
-  glow,
-  width,
-  spacing,
-  speed,
-}) => {
+};
+export const GridTunnel: FC<Props & RefAttributes<Group>> = forwardRef<
+  Group,
+  Props
+>(function GridTunnel(
+  {
+    position = new Vector3(0, 0, 0),
+    rotation = new Euler(0, 0, 0),
+    scale = new Vector3(1, 1, 1),
+    color,
+    opacity,
+    glow,
+    width,
+    spacing,
+    speed,
+  },
+  ref
+) {
   return (
-    <group position={position} rotation={rotation} scale={scale}>
+    <group
+      position={position}
+      rotation={rotation}
+      scale={scale}
+      ref={ref}
+      renderOrder={-5}
+    >
       <GridRect
         rotation={new Euler(0, 0, 0).setFromVector3(
           new Vector3(0, 0, 0).sub(new Vector3(0, -Math.PI / 2, 0))
@@ -48,6 +61,7 @@ export const GridTunnel: FC<{
         width={width}
         spacing={spacing}
         speed={speed}
+        name="left"
       />
       <GridRect
         rotation={new Euler(0, 0, 0).setFromVector3(
@@ -60,6 +74,7 @@ export const GridTunnel: FC<{
         width={width}
         spacing={spacing}
         speed={speed}
+        name="bottom"
       />
       <GridRect
         rotation={new Euler(0, 0, 0).setFromVector3(
@@ -72,6 +87,7 @@ export const GridTunnel: FC<{
         width={width}
         spacing={spacing}
         speed={speed}
+        name="right"
       />
       <GridRect
         rotation={new Euler(0, 0, 0).setFromVector3(
@@ -84,7 +100,8 @@ export const GridTunnel: FC<{
         width={width}
         spacing={spacing}
         speed={speed}
+        name="top"
       />
     </group>
   );
-};
+});

@@ -47,11 +47,15 @@ export const FitToWidth: FC<PropsWithChildren<Props>> = forwardRef(
             scale = Math.min(scale, maxWidth / width);
           }
           container.scale.setScalar(scale);
+          onCenteredProp?.({
+            ...onCenteredProps,
+            width: frustumWidth,
+          });
         } else {
           // Fall back to the viewport for non-perspective cameras
           container.scale.setScalar(viewport.width / width);
+          onCenteredProp?.(onCenteredProps);
         }
-        onCenteredProp?.(onCenteredProps);
       },
       [
         camera,

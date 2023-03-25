@@ -28,7 +28,7 @@ const Connect: FC<{
     address,
   });
   const { data: ensAvatar, isLoading: ensAvatarIsLoading } = useEnsAvatar({
-    addressOrName: address,
+    address,
   });
   const onClick = useCallback(() => {
     dispatch(web3Actions.openWalletSelectModal());

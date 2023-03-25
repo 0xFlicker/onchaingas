@@ -51,7 +51,7 @@ export const CopyToClipboardText: FC<
 
 export const InfoCard: FC = () => {
   return (
-    <>
+    <Card variant="outlined">
       <Card>
         <CardHeader title="What is it?" />
         <CardContent sx={{ ml: 2 }}>
@@ -163,6 +163,6 @@ export const InfoCard: FC = () => {
           </Typography>
         </CardContent>
       </Card>
-    </>
+    </Card>
   );
 };

@@ -20,8 +20,8 @@ import {
   nftOnChainGasContractAddress,
   nftOnChainCheckContractAddress,
 } from "utils/config";
-import gasAbi from "../nft.abi.json";
-import checkAbi from "../check.abi.json";
+import gasAbi from "../nft.abi";
+import checkAbi from "../check.abi";
 import { BigNumber, utils } from "ethers";
 import Slider from "@mui/material/Slider";
 import { MintModal } from "./MintModal";
@@ -42,36 +42,36 @@ export const ClaimCard: FC = () => {
   } = useContractReads({
     contracts: [
       {
-        addressOrName: nftOnChainCheckContractAddress.get(),
-        contractInterface: checkAbi,
+        address: nftOnChainCheckContractAddress.get(),
+        abi: checkAbi,
         functionName: "publicSaleActive",
       },
       {
-        addressOrName: nftOnChainCheckContractAddress.get(),
-        contractInterface: checkAbi,
+        address: nftOnChainCheckContractAddress.get(),
+        abi: checkAbi,
         functionName: "totalSupply",
       },
       {
-        addressOrName: nftOnChainCheckContractAddress.get(),
-        contractInterface: checkAbi,
+        address: nftOnChainCheckContractAddress.get(),
+        abi: checkAbi,
         functionName: "cost",
       },
       {
-        addressOrName: nftOnChainCheckContractAddress.get(),
-        contractInterface: checkAbi,
+        address: nftOnChainCheckContractAddress.get(),
+        abi: checkAbi,
         functionName: "maxMint",
       },
       {
-        addressOrName: nftOnChainCheckContractAddress.get(),
-        contractInterface: checkAbi,
+        address: nftOnChainCheckContractAddress.get(),
+        abi: checkAbi,
         functionName: "availableMint",
         args: [address],
       },
     ],
   });
   const { data: balanceOfResponse, refetch: balanceRefetch } = useContractRead({
-    addressOrName: nftOnChainCheckContractAddress.get(),
-    contractInterface: checkAbi,
+    address: nftOnChainCheckContractAddress.get(),
+    abi: checkAbi,
     functionName: "balanceOf",
     args: [address],
     cacheTime: 0,
@@ -109,8 +109,8 @@ export const ClaimCard: FC = () => {
   }, [availableMint]);
 
   const { data: tokensOfOwnerResponse } = useContractRead({
-    addressOrName: nftOnChainGasContractAddress.get(),
-    contractInterface: gasAbi,
+    address: nftOnChainGasContractAddress.get(),
+    abi: gasAbi,
     functionName: "tokensOfOwner",
     args: [address],
   });
@@ -119,10 +119,10 @@ export const ClaimCard: FC = () => {
 
   const { data: availableClaimsResponse } = useContractReads({
     contracts: tokensOfOwner.map((tokenId) => ({
-      addressOrName: nftOnChainCheckContractAddress.get(),
-      contractInterface: checkAbi,
+      address: nftOnChainCheckContractAddress.get(),
+      abi: checkAbi,
       functionName: "claimed",
-      args: [tokenId],
+      args: [BigNumber.from(tokenId)],
     })),
   });
 
@@ -132,10 +132,10 @@ export const ClaimCard: FC = () => {
       .filter((d) => !!d) || [];
 
   const { config: mintConfig } = usePrepareContractWrite({
-    addressOrName: nftOnChainCheckContractAddress.get(),
-    contractInterface: checkAbi,
+    address: nftOnChainCheckContractAddress.get(),
+    abi: checkAbi,
     functionName: "mint",
-    args: [address, mintAmount],
+    args: [address, BigNumber.from(mintAmount)],
     enabled: availableClaims.length === 0,
     overrides: {
       value: costWei.mul(mintAmount),
@@ -143,10 +143,13 @@ export const ClaimCard: FC = () => {
   });
 
   const { config: claimConfig } = usePrepareContractWrite({
-    addressOrName: nftOnChainCheckContractAddress.get(),
-    contractInterface: checkAbi,
+    address: nftOnChainCheckContractAddress.get(),
+    abi: checkAbi,
     functionName: "claimAndMint",
-    args: [availableClaims, mintAmount],
+    args: [
+      availableClaims.map((a) => BigNumber.from(a)),
+      BigNumber.from(mintAmount),
+    ],
     enabled: availableClaims.length > 0,
     overrides: {
       value: costWei.mul(mintAmount),
@@ -154,10 +157,10 @@ export const ClaimCard: FC = () => {
   });
 
   const { config: claimOnlyConfig } = usePrepareContractWrite({
-    addressOrName: nftOnChainCheckContractAddress.get(),
-    contractInterface: checkAbi,
+    address: nftOnChainCheckContractAddress.get(),
+    abi: checkAbi,
     functionName: "claim",
-    args: [availableClaims],
+    args: [availableClaims.map((a) => BigNumber.from(a))],
     enabled: availableClaims.length > 0,
   });
 

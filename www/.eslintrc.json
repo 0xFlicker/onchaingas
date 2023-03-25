@@ -1,4 +1,7 @@
 {
   "extends": "next/core-web-vitals",
-  "ignorePatterns": ["**/typechain/*.js"]
+  "ignorePatterns": ["**/typechain/*.js"],
+  "rules": {
+    "react/no-unknown-property": [1, { "ignore": ["position", "transparent", "attach", "intensity", "lookAt", "args"] }]
+  }
 }

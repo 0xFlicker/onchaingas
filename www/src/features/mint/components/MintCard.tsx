@@ -17,7 +17,7 @@ import {
 } from "features/web3/redux";
 import { FC, useCallback, useEffect, useState } from "react";
 import { nftOnChainGasContractAddress } from "utils/config";
-import nftAbi from "../nft.abi.json";
+import nftAbi from "../nft.abi";
 import { BigNumber, utils } from "ethers";
 import Slider from "@mui/material/Slider";
 import { MintModal } from "./MintModal";
@@ -38,41 +38,41 @@ export const MintCard: FC = () => {
   } = useContractReads({
     contracts: [
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        address: nftOnChainGasContractAddress.get(),
+        abi: nftAbi,
         functionName: "publicSaleActive",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        address: nftOnChainGasContractAddress.get(),
+        abi: nftAbi,
         functionName: "totalSupply",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        address: nftOnChainGasContractAddress.get(),
+        abi: nftAbi,
         functionName: "maxSupply",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        address: nftOnChainGasContractAddress.get(),
+        abi: nftAbi,
         functionName: "cost",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        address: nftOnChainGasContractAddress.get(),
+        abi: nftAbi,
         functionName: "maxMint",
       },
       {
-        addressOrName: nftOnChainGasContractAddress.get(),
-        contractInterface: nftAbi,
+        address: nftOnChainGasContractAddress.get(),
+        abi: nftAbi,
         functionName: "availableMint",
         args: [address],
       },
     ],
   });
   const { data: balanceOfResponse, refetch: balanceRefetch } = useContractRead({
-    addressOrName: nftOnChainGasContractAddress.get(),
-    contractInterface: nftAbi,
+    address: nftOnChainGasContractAddress.get(),
+    abi: nftAbi,
     functionName: "balanceOf",
     args: [address],
     cacheTime: 0,
@@ -112,10 +112,10 @@ export const MintCard: FC = () => {
     setMintAmount(availableMint);
   }, [availableMint]);
   const { config } = usePrepareContractWrite({
-    addressOrName: nftOnChainGasContractAddress.get(),
-    contractInterface: nftAbi,
+    address: nftOnChainGasContractAddress.get(),
+    abi: nftAbi,
     functionName: "mint",
-    args: [address, mintAmount],
+    args: [address, BigNumber.from(mintAmount)],
     overrides: {
       value: costWei.mul(mintAmount),
     },
@@ -166,7 +166,7 @@ export const MintCard: FC = () => {
         isSuccess={mintIsSuccess}
         result={mintData}
       />
-      <Card>
+      <Card variant="outlined">
         <CardHeader title="Mint" />
         <CardContent>
           <Typography variant="body1" gutterBottom>

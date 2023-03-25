@@ -26,7 +26,7 @@ export const nftOnChainGasContractAddress = {
     if (!process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS) {
       throw new Error("NEXT_PUBLIC_NFT_CONTRACT_ADDRESS not set");
     }
-    return process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS;
+    return process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS as `0x${string}`;
   },
 };
 
@@ -35,7 +35,7 @@ export const nftOnChainCheckContractAddress = {
     if (!process.env.NEXT_PUBLIC_NFT_CHECK_CONTRACT_ADDRESS) {
       throw new Error("NEXT_PUBLIC_NFT_CHECK_CONTRACT_ADDRESS not set");
     }
-    return process.env.NEXT_PUBLIC_NFT_CHECK_CONTRACT_ADDRESS;
+    return process.env.NEXT_PUBLIC_NFT_CHECK_CONTRACT_ADDRESS as `0x${string}`;
   },
 };
 

@@ -37,7 +37,7 @@ export const AppBar: FC<{
         <Toolbar>
           <MenuIcon onClick={handleMenu} />
 
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 4 }}>
+          <Typography variant="h1" component="div" sx={{ flexGrow: 1, ml: 4 }}>
             {title}
           </Typography>
           <Box sx={{ flexGrow: 1 }} component="span" />

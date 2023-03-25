@@ -6,7 +6,7 @@ interface IState {
   menuOpen: boolean;
 }
 const initialState: IState = {
-  darkMode: false,
+  darkMode: true,
   fancyMode: true,
   menuOpen: false,
 };

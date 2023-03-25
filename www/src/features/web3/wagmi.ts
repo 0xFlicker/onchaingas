@@ -17,7 +17,7 @@ export const appProviders = [
 ];
 
 export const appChains = lazySingleton(() => {
-  return configureChains(supportedChains.get(), appProviders);
+  return configureChains(supportedChains.get() as any, appProviders);
 });
 
 export type TAppConnectors =
@@ -78,6 +78,5 @@ export const wagmiClient = lazySingleton(() => {
     connectors: appConnectors.get(),
     provider,
     webSocketProvider,
-    autoConnect: true,
   });
 });

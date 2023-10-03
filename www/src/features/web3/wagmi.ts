@@ -27,6 +27,9 @@ export type TAppConnectors =
   | InjectedConnector;
 export const appConnectors = lazySingleton<TAppConnectors[]>(() => {
   const { chains } = appChains.get();
+  if (typeof window === "undefined") {
+    return [];
+  }
   return [
     new MetaMaskConnector({ chains }),
     new WalletConnectConnector({

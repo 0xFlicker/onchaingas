@@ -82,11 +82,56 @@ export const RootMenu: FC = () => {
   });
   const AnimatedCard = animated(Card);
   const AnimatedLinkCard = animated(LinkCard);
+
   return (
     <Grid container spacing={2} maxWidth="md">
       <Grid item xs={12} md={12}>
         <AnimatedCard variant="outlined" style={header1Props}>
-          <CardHeader title="Current Project" />
+          <CardHeader title="Current Projects" />
+        </AnimatedCard>
+      </Grid>
+      <Grid item xs={12} md={12}>
+        <Box paddingLeft={8}>
+          <AnimatedCard variant="outlined" style={header1Props}>
+            <CardHeader title="Bitflick" />
+            <CardContent>
+              <Typography>
+                Ordinals inscription website for lazy mints of recursive
+                ordinals
+              </Typography>
+            </CardContent>
+          </AnimatedCard>
+        </Box>
+      </Grid>
+      <Grid item xs={12} md={12}>
+        <Box paddingLeft={8}>
+          <AnimatedCard variant="outlined" style={header1Props}>
+            <CardHeader title="????" />
+            <CardContent>
+              <Typography>
+                Tools for creators to reward their community with airdrops
+              </Typography>
+            </CardContent>
+          </AnimatedCard>
+        </Box>
+      </Grid>
+      <Grid item xs={12} md={12}>
+        <Box paddingLeft={8}>
+          <AnimatedLinkCard
+            to="https://fameladysociety.com"
+            headerTitle="Fame Lady Society"
+            CardMediaProps={{
+              ...defaultCardMediaProps,
+              image: "/fls-wrap.gif",
+            }}
+            style={header1aProps}
+            content="NFT wrapper and website for the Fame Lady Society"
+          />
+        </Box>
+      </Grid>
+      <Grid item xs={12} md={12}>
+        <AnimatedCard variant="outlined" style={header1Props}>
+          <CardHeader title="Asleep Projects" />
         </AnimatedCard>
       </Grid>
       <Grid item xs={12} md={12}>

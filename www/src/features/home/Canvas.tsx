@@ -17,7 +17,12 @@ export const ThreeCanvas: FC = () => {
       style={{ height: "100vh", width: "100vw" }}
       frameloop="always"
     >
-      <ScrollControls pages={MAX_PAGE}>
+      <ScrollControls
+        pages={MAX_PAGE}
+        style={{
+          left: "15px",
+        }}
+      >
         <ScrollProvider pages={MAX_PAGE}>
           <Content />
         </ScrollProvider>

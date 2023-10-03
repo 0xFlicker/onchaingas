@@ -7,6 +7,7 @@ import { store, useAppSelector } from "app/store";
 import { selectors as appbarSelectors } from "features/appbar/redux";
 import dark from "themes/dark";
 import light from "themes/light";
+import { WagmiConfig } from "wagmi";
 
 export const StateAvailableContent: FC<PropsWithChildren<{}>> = ({
   children,

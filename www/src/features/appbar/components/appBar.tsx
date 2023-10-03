@@ -6,15 +6,8 @@ import {
   useState,
   ReactNode,
 } from "react";
-import {
-  AppBar as MuiAppBar,
-  Toolbar,
-  Box,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { AppBar as MuiAppBar, Toolbar, Box, Typography } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
-import NextImage from "next/image";
 import { Connect } from "features/web3";
 import { HomeMenu } from "./HomeMenu";
 import { ChainSelector } from "features/web3/components/ChainSelector";
@@ -22,7 +15,8 @@ import { ChainSelector } from "features/web3/components/ChainSelector";
 export const AppBar: FC<{
   menu: ReactNode;
   title?: ReactNode;
-}> = ({ menu, title }) => {
+  right?: ReactNode;
+}> = ({ menu, title, right }) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<Element | null>(null);
 
   const onMenuClose = useCallback(() => {
@@ -41,6 +35,7 @@ export const AppBar: FC<{
             {title}
           </Typography>
           <Box sx={{ flexGrow: 1 }} component="span" />
+          {right}
           <ChainSelector />
           <Connect />
         </Toolbar>

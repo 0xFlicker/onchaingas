@@ -26,9 +26,14 @@ export const ClickToSkipText: FC<
 
   return (
     <>
-      <AnimatedOrbitron position={position as any} onClick={onSkip} {...rest}>
+      <AnimatedOrbitron
+        position={position as any}
+        onClick={onSkip}
+        height={0.1}
+        {...rest}
+      >
         skip
-        <meshStandardMaterial transparent color={NEON_BLUE} />
+        <meshStandardMaterial color={NEON_BLUE} />
       </AnimatedOrbitron>
     </>
   );

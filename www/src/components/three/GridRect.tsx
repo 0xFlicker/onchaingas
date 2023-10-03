@@ -2,8 +2,15 @@ import { useScroll } from "hooks/useScroll";
 import { Color, Euler, useFrame, Vector2, Vector3 } from "@react-three/fiber";
 import { FC, forwardRef, useMemo, useRef } from "react";
 import "shader/grid";
-import { FrontSide, Mesh, ShaderMaterial } from "three";
+import {
+  Color as ThreeColor,
+  FrontSide,
+  Group,
+  Mesh,
+  ShaderMaterial,
+} from "three";
 import { v4 as uuidv4 } from "uuid";
+import { MeshReflectorMaterial } from "@react-three/drei";
 
 const key = uuidv4();
 
@@ -63,8 +70,9 @@ type Props = {
   width: number;
   spacing: Vector2;
   speed: number;
+  mirror?: number;
 };
-export const GridRect: FC<Props> = forwardRef<Mesh, Props>(function GridRect(
+export const GridRect: FC<Props> = forwardRef<Group, Props>(function GridRect(
   {
     rotation,
     name,
@@ -76,26 +84,29 @@ export const GridRect: FC<Props> = forwardRef<Mesh, Props>(function GridRect(
     width,
     spacing,
     speed,
+    mirror,
   },
   ref
 ) {
   return (
-    <mesh
-      rotation={rotation}
-      position={position}
-      scale={scale}
-      ref={ref}
-      name={name}
-    >
-      <planeGeometry attach="geometry" args={[1, 1, 1, 1]} />
-      <ShaderComponent
-        color={color}
-        opacity={opacity}
-        width={width}
-        glow={glow}
-        spacing={spacing}
-        speed={speed}
-      />
-    </mesh>
+    <group rotation={rotation} position={position} scale={scale} ref={ref}>
+      <mesh name={name}>
+        <planeGeometry attach="geometry" args={[1, 1, 1, 1]} />
+        <ShaderComponent
+          color={color}
+          opacity={opacity}
+          width={width}
+          glow={glow}
+          spacing={spacing}
+          speed={speed}
+        />
+      </mesh>
+      {mirror && (
+        <mesh name={name}>
+          <planeGeometry attach="geometry" args={[1, 1, 1, 1]} />
+          <MeshReflectorMaterial mirror={1} />
+        </mesh>
+      )}
+    </group>
   );
 });

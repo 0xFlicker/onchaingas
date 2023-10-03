@@ -11,6 +11,7 @@ import { Box, Toolbar, Typography } from "@mui/material";
 import { AppBar } from "features/appbar/components/appBar";
 import { useAppDispatch } from "app/store";
 import { actions as appbarActions } from "features/appbar/redux";
+import { CurrentPrice } from "features/friendtech";
 
 export const Main: FC<
   PropsWithChildren<{
@@ -38,7 +39,13 @@ export const Main: FC<
 
   return (
     <>
-      <AppBar menu={menu} title={title} />
+      <AppBar
+        menu={menu}
+        title={title}
+        right={
+          <CurrentPrice address="0x90348e325bc286c7b7c1Ec575Cbb775b4b1903F0" />
+        }
+      />
       <Box
         ref={targetRef}
         component="main"

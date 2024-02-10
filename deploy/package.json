@@ -7,8 +7,7 @@
   "scripts": {
     "build": "tsc",
     "cdk": " node --experimental-json-modules ./node_modules/.bin/cdk",
-    "deploy:0xflick": "AWS_PROFILE=0xflick-portfolio-admin DEPLOYMENT=0xflick.com node --experimental-json-modules ./node_modules/.bin/cdk deploy",
-    "deploy:nameflick": "AWS_PROFILE=nameflick DEPLOYMENT=nameflick.com node --experimental-json-modules ./node_modules/.bin/cdk deploy",
+    "deploy": "node --experimental-json-modules ./node_modules/.bin/cdk deploy",
     "bootstrap": "yarn cdk --app \"node --loader ts-node/esm stack/bootstrap.ts\" bootstrap",
     "deploy:bootstrap": "yarn cdk --app \"node --loader ts-node/esm stack/bootstrap.ts\" deploy --all",
     "build:layer:sharp": "bash ./scripts/build-layer-sharp.sh",

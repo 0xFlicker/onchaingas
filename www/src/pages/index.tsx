@@ -139,6 +139,27 @@ const HomePage: NextPage<{
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:creator" content="@0xflick" />
+        <meta name="fc:frame" content="\vNext" />
+        <meta
+          name="fc:frame:image"
+          content="https://0xflick.xyz/marketing/home.jpeg"
+        />
+        <meta name="fc:frame:image:aspect_ratio" content="1.91:1" />
+        <meta
+          name="fc:frame:button:1"
+          content={`friendtech key: ${sharePrice}`}
+        />
+        <meta name="fc:frame:button:1:action" content="link" />
+        <meta
+          name="fc:frame:button:1:target"
+          content="https://www.friend.tech/rooms/0x90348e325bc286c7b7c1ec575cbb775b4b1903f0"
+        />
+        <meta name="fc:frame:button:2" content="twitter / x" />
+        <meta name="fc:frame:button:2:action" content="link" />
+        <meta
+          name="fc:frame:button:2:target"
+          content="https://twitter.com/0xflick"
+        />
       </Head>
       {loading ? (
         <Box />

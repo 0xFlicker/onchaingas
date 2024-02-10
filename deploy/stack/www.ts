@@ -183,7 +183,7 @@ export class WwwStack extends cdk.Stack {
         cookieBehavior: cloudfront.CacheCookieBehavior.none(),
         defaultTtl: Duration.days(30),
         maxTtl: Duration.days(30),
-        minTtl: Duration.days(30),
+        minTtl: Duration.minutes(0),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true,
       }

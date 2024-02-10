@@ -80,6 +80,7 @@ export const RootMenu: FC = () => {
     },
     delay: delayGenerator(),
   });
+
   const AnimatedCard = animated(Card);
   const AnimatedLinkCard = animated(LinkCard);
 
@@ -93,19 +94,6 @@ export const RootMenu: FC = () => {
       <Grid item xs={12} md={12}>
         <Box paddingLeft={8}>
           <AnimatedCard variant="outlined" style={header1Props}>
-            <CardHeader title="Bitflick" />
-            <CardContent>
-              <Typography>
-                Ordinals inscription website for lazy mints of recursive
-                ordinals
-              </Typography>
-            </CardContent>
-          </AnimatedCard>
-        </Box>
-      </Grid>
-      <Grid item xs={12} md={12}>
-        <Box paddingLeft={8}>
-          <AnimatedCard variant="outlined" style={header1Props}>
             <CardHeader title="????" />
             <CardContent>
               <Typography>
@@ -113,6 +101,20 @@ export const RootMenu: FC = () => {
               </Typography>
             </CardContent>
           </AnimatedCard>
+        </Box>
+      </Grid>
+      <Grid item xs={12} md={12}>
+        <Box paddingLeft={8}>
+          <AnimatedLinkCard
+            to="https://www.bitflick.xyz"
+            headerTitle="Bitflick"
+            CardMediaProps={{
+              ...defaultCardMediaProps,
+              image: "/206.png",
+            }}
+            style={header1Props}
+            content="Ordinals inscription website for lazy mints of recursive ordinals"
+          />
         </Box>
       </Grid>
       <Grid item xs={12} md={12}>

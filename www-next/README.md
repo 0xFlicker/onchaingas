@@ -19,6 +19,7 @@ The etherscan.io API key, which is only needed to generate new wagmi generated f
 Finally, run the development server:
 
 ```bash
+
 yarn dev
 ```
 

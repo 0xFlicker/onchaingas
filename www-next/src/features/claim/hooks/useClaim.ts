@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { base, sepolia } from "viem/chains";
-import type { Input, Output } from "@/app/api/[network]/claim/route";
+import type {
+  Input,
+  Output,
+} from "@/app/api/[network]/[contractAddress]/claim/route";
 
 function networkName(chainId: typeof sepolia.id | typeof base.id) {
   switch (chainId) {

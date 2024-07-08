@@ -83,7 +83,7 @@ export function useAllocation({
                 functionName: "tokenOfOwnerByIndex",
                 args: [address, BigInt(index)],
                 chainId: mainnet.id,
-              }) as const,
+              }) as const
           )
         : [],
     });
@@ -110,7 +110,7 @@ export function useAllocation({
       : [];
     const flsAllocation = flsTokens.reduce(
       (acc, allocation) => acc + allocation,
-      0n,
+      0n
     );
 
     const squadTokenIds =
@@ -126,7 +126,7 @@ export function useAllocation({
       : [];
     const squadTotal = squadAllocation.reduce(
       (acc, allocation) => acc + allocation,
-      0n,
+      0n
     );
 
     const hunnysAllocation = mainnetHunnys

@@ -8,13 +8,13 @@ import {
 } from "@/viem/mainnet-client";
 import { client as polygonClient } from "@/viem/polygon-client";
 import {
+  ALLOCATION_PER_SISTER_TOKEN,
   HUNNYS_CONTRACT,
-  MARKET_CAP,
   MERMAIDS_CONTRACT,
+  METAVIXEN_BOOST,
   METAVIXEN_CONTRACT,
   OG_AGE_BOOST,
   OG_RANK_BOOST,
-  SISTER_TOKENS,
 } from "@/features/claim/hooks/constants";
 import { getFlsPoolAllocation } from "@/features/claim/hooks/useSnapshot";
 
@@ -28,7 +28,7 @@ function formatUnit(amount: bigint) {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { address: string } },
+  { params }: { params: { address: string } }
 ) {
   const address = params.address as `0x${string}`;
   const [mainnetHunnys, mainnetMermaids, polygonMetavixens] = await Promise.all(
@@ -51,7 +51,7 @@ export async function GET(
         functionName: "balanceOf",
         args: [address],
       }),
-    ],
+    ]
   );
 
   const flsPoolAllocation = getFlsPoolAllocation(OG_RANK_BOOST, OG_AGE_BOOST);
@@ -63,23 +63,16 @@ export async function GET(
     : [];
   const flsAllocation = flsTokens.reduce(
     (acc, allocation) => acc + allocation,
-    0n,
+    0n
   );
   const hunnysAllocation = mainnetHunnys
-    ? BigInt(
-        ((Number(mainnetHunnys) * 0.03) / MARKET_CAP) * Number(SISTER_TOKENS),
-      )
+    ? mainnetHunnys * ALLOCATION_PER_SISTER_TOKEN
     : 0n;
   const mermaidsAllocation = mainnetMermaids
-    ? BigInt(
-        ((Number(mainnetMermaids) * 0.03) / MARKET_CAP) * Number(SISTER_TOKENS),
-      )
+    ? mainnetMermaids * ALLOCATION_PER_SISTER_TOKEN
     : 0n;
   const metavixensAllocation = polygonMetavixens
-    ? BigInt(
-        ((Number(polygonMetavixens) * 0.03) / MARKET_CAP) *
-          Number(SISTER_TOKENS),
-      )
+    ? polygonMetavixens * ALLOCATION_PER_SISTER_TOKEN * METAVIXEN_BOOST
     : 0n;
 
   return new ImageResponse(
@@ -191,7 +184,7 @@ export async function GET(
                 flsAllocation +
                   hunnysAllocation +
                   mermaidsAllocation +
-                  metavixensAllocation,
+                  metavixensAllocation
               ).toLocaleString()}
             </p>
             <p
@@ -209,8 +202,8 @@ export async function GET(
                   flsAllocation +
                     hunnysAllocation +
                     mermaidsAllocation +
-                    metavixensAllocation,
-                ) / 1_000_000,
+                    metavixensAllocation
+                ) / 1_000_000
               )}
             </p>
             <div
@@ -226,7 +219,7 @@ export async function GET(
     {
       width: 1100,
       height: 1100,
-    },
+    }
   );
 }
 

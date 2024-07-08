@@ -1,0 +1,19 @@
+query MainnetMints($first: Int, $skip: Int, $orderDirection: OrderDirection) {
+  transfers(
+    first: $first
+    skip: $skip
+    orderDirection: $orderDirection
+    where: { from: "0x0000000000000000000000000000000000000000" }
+  ) {
+    FameLadySociety_id
+    blockNumber
+    blockTimestamp
+  }
+}
+
+query MainnetOwners($first: Int, $skip: Int) {
+  ownerships(first: $first, skip: $skip) {
+    tokenId
+    owner
+  }
+}

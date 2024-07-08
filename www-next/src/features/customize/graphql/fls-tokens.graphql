@@ -1,0 +1,15 @@
+query MainnetTokenByOwner(
+  $owner: Bytes!
+  $first: Int
+  $skip: Int
+  $orderDirection: OrderDirection
+) {
+  ownerships(
+    where: { owner: $owner }
+    first: $first
+    skip: $skip
+    orderDirection: $orderDirection
+  ) {
+    tokenId
+  }
+}

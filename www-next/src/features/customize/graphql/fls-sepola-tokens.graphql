@@ -1,0 +1,15 @@
+query SepoliaTokenByOwner(
+  $owner: Bytes!
+  $first: Int
+  $skip: Int
+  $orderDirection: OrderDirection
+) {
+  sepolia_ownerships(
+    where: { owner: $owner }
+    first: $first
+    skip: $skip
+    orderDirection: $orderDirection
+  ) {
+    tokenId
+  }
+}

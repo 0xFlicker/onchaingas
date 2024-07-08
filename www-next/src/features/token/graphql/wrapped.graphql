@@ -1,0 +1,41 @@
+query MainnetTokenMintedOn(
+  $tokenId: BigInt
+  $first: Int
+  $skip: Int
+  $orderDirection: OrderDirection
+) {
+  transfers(
+    first: $first
+    skip: $skip
+    orderDirection: $orderDirection
+    where: {
+      from: "0x0000000000000000000000000000000000000000"
+      FameLadySociety_id: $tokenId
+    }
+  ) {
+    FameLadySociety_id
+    blockNumber
+    blockTimestamp
+  }
+}
+
+query SepoliaTokenMintedOn(
+  $tokenId: BigInt
+  $first: Int
+  $skip: Int
+  $orderDirection: OrderDirection
+) {
+  sepolia_transfers(
+    first: $first
+    skip: $skip
+    orderDirection: $orderDirection
+    where: {
+      from: "0x0000000000000000000000000000000000000000"
+      FameLadySociety_id: $tokenId
+    }
+  ) {
+    FameLadySociety_id
+    blockNumber
+    blockTimestamp
+  }
+}

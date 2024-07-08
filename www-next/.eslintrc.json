@@ -1,0 +1,9 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "@next/next/no-server-import-in-page": "off",
+    "react/no-unknown-property": [1, { "ignore": ["metalness", "position", "transparent", "attach", "intensity", "lookAt", "args", "rotation", "roughness", "map", "reflectivity", "object"] }]
+  }
+}
+
+

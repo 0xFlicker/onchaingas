@@ -4,10 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Generative Art with Canvas</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden; /* Prevent scrollbars */
+      }
+      canvas {
+        display: block; /* Remove the default margin of the canvas */
+      }
+    </style>
   </head>
   <body>
     <canvas id="destinationCanvas" width="400" height="400"></canvas>
-    <button onclick="generateArt()">Generate Art</button>
     <script>
       const words = [
         "austin",
@@ -24,6 +34,12 @@
       const ctx = canvas.getContext("2d");
 
       async function generateRandomSeed() {
+        // read query string search param to get seed from URL?id=123
+        const urlParams = new URLSearchParams(window.location.search);
+        const seed = urlParams.get("id");
+        if (seed) {
+          return seed;
+        }
         const array = window.crypto.getRandomValues(new Uint8Array(32));
         const hashBuffer = await crypto.subtle.digest("SHA-256", array);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -36,24 +52,7 @@
         return [color1, color2];
       }
 
-      function drawZigZag(ctx, width, height) {
-        const zigZagWidth = width / 10;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        let x = 0,
-          y = 0;
-        while (x < width && y < height) {
-          x += zigZagWidth;
-          y = y === 0 ? height / 2 : 0;
-          ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.closePath();
-      }
-
-      function fillZigZag(ctx, width, height, colors) {
+      function fillRects(ctx, width, height, colors) {
         const [color1, color2] = colors;
         ctx.fillStyle = color1;
         ctx.fillRect(0, 0, width / 2, height);
@@ -61,97 +60,23 @@
         ctx.fillRect(width / 2, 0, width / 2, height);
       }
 
-      function getRandomPosition(seed, width, height) {
-        const x = parseInt(seed.slice(0, 2), 16) % width;
-        const y = parseInt(seed.slice(2, 4), 16) % height;
-        return [x, y];
-      }
-
-      function drawText(ctx, width, height, words, seed) {
-        ctx.font = "20px Arial";
-        ctx.fillStyle = "black";
-        const positions = [];
-        const maxAttempts = 100; // Maximum attempts to find a non-overlapping position
-        const cornerDeadZone = 50; // Distance from corners where no text is placed
-
-        function shuffleArray(array) {
-          for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // Swap elements
-          }
-          return array;
-        }
-        shuffleArray([...words])
-          .slice(0, Math.random() < 0.5 ? 2 : 3)
-          .forEach((word) => {
-            let attempts = 0;
-            let [x, y] = getRandomPosition(seed + word, width, height);
-
-            // Adjust position if too close to a corner
-            x = Math.max(x, cornerDeadZone);
-            y = Math.max(y, cornerDeadZone);
-            x = Math.min(x, width - cornerDeadZone);
-            y = Math.min(y, height - cornerDeadZone);
-
-            while (
-              positions.some(
-                ([px, py]) => Math.abs(px - x) < 50 && Math.abs(py - y) < 20
-              ) &&
-              attempts < maxAttempts
-            ) {
-              [x, y] = getRandomPosition(
-                seed + word + Math.random().toString(16).slice(2),
-                width,
-                height
-              );
-              // Adjust for corner dead zone again after repositioning
-              x = Math.max(x, cornerDeadZone);
-              y = Math.max(y, cornerDeadZone);
-              x = Math.min(x, width - cornerDeadZone);
-              y = Math.min(y, height - cornerDeadZone);
-              attempts++;
-            }
-
-            if (attempts < maxAttempts) {
-              positions.push([x, y]);
-
-              if (Math.random() > 0.5) {
-                ctx.fillText(word, x, y);
-              } else {
-                ctx.save();
-                ctx.translate(x, y);
-                ctx.rotate(Math.PI / 2);
-                ctx.fillText(word, 0, 0);
-                ctx.restore();
-              }
-            } else {
-              // Handle the case where a suitable position wasn't found
-              console.log(
-                `Could not place '${word}' after ${maxAttempts} attempts.`
-              );
-            }
-          });
+      let seedPromise = generateRandomSeed();
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        generateArt(); // Regenerate the art to fit the new canvas size
       }
 
       async function generateArt() {
-        const seed = await generateRandomSeed();
+        const seed = await seedPromise;
         const [color1, color2] = getRandomColorPair(seed);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw zigzag and fill with colors
-        drawZigZag(ctx, canvas.width, canvas.height);
-        fillZigZag(ctx, canvas.width, canvas.height, [color1, color2]);
-
-        // Draw text
-        drawText(ctx, canvas.width, canvas.height, words, seed);
-
-        // Export canvas to PNG
-        const dataURL = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.download = "generated_art.png";
-        link.href = dataURL;
-        link.click();
+        fillRects(ctx, canvas.width, canvas.height, [color1, color2]);
       }
+      window.addEventListener("load", resizeCanvas);
+      window.addEventListener("resize", resizeCanvas);
     </script>
   </body>
 </html>

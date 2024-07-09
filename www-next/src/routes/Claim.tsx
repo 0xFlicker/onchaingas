@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { DefaultProvider } from "@/context/default";
 import Container from "@mui/material/Container";
@@ -21,56 +21,24 @@ import { base, sepolia } from "viem/chains";
 import { FameBalanceCard } from "@/features/claim/components/FameBalanceCard";
 
 const Content: FC<{
-  address: `0x${string}`;
   chainId: typeof sepolia.id | typeof base.id;
-}> = ({ address, chainId }) => {
+}> = ({ chainId }) => {
   const account = useAccount();
-
+  useEffect(() => {
+    if (account.address && isAddress(account.address)) {
+      redirect(
+        `${chainId === sepolia.id ? "/sepolia" : "/base/"}/claim/${account.address}`
+      );
+    }
+  }, [chainId, account.address]);
   return (
     <Container sx={{ mt: 8 }}>
       <Grid2 container spacing={2}>
         <Grid2 xs={12}>
-          <Card
-            sx={{
-              marginTop: 4,
-            }}
-          >
-            <CardContent>
-              <Typography variant="body1">
-                These numbers are an estimate and subject to change.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid2>
-
-        <Grid2 xs={12}>
           <FameBalanceCard chainId={chainId} />
         </Grid2>
-        <Grid2 xs={12}>
-          <SlimChecker
-            address={address}
-            chainId={8453}
-            ageBoost={OG_AGE_BOOST}
-            rankBoost={OG_RANK_BOOST}
-          />
-        </Grid2>
-        {account.address && account.address !== address && (
-          <Grid2 xs={12}>
-            <Card>
-              <CardActionArea
-                href={`${chainId === sepolia.id ? "/sepolia" : "/base"}/claim/${account.address}`}
-              >
-                <CardContent>
-                  <Typography variant="body1">
-                    You are connected with the address {account.address}, click
-                    here to go to your claim page
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          </Grid2>
-        )}
-        {account.address === address && (
+
+        {account.address && (
           <>
             <FameLadySocietyClaimCard chainId={chainId} />
             <OnChainGasClaimCard chainId={chainId} />
@@ -93,10 +61,8 @@ const Content: FC<{
   );
 };
 const NextPage: FC<{
-  address: string;
   chainId: typeof sepolia.id | typeof base.id;
-}> = ({ address, chainId }) => {
-  const isValid = isAddress(address);
+}> = ({ chainId }) => {
   return (
     <DefaultProvider base siwe mainnet>
       <Main
@@ -106,27 +72,7 @@ const NextPage: FC<{
           </Typography>
         }
       >
-        {isValid ? (
-          <Content address={address} chainId={chainId} />
-        ) : (
-          <Container sx={{ mt: 8 }}>
-            <Grid2 container spacing={2}>
-              <Grid2 xs={12}>
-                <Card
-                  sx={{
-                    marginTop: 4,
-                  }}
-                >
-                  <CardContent>
-                    <Typography variant="body1">
-                      Invalid address {address}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid2>
-            </Grid2>
-          </Container>
-        )}
+        <Content chainId={chainId} />
       </Main>
     </DefaultProvider>
   );

@@ -72,6 +72,7 @@ export const ClaimCard: FC<{
 
   useEffect(() => {
     if (writeError instanceof ContractFunctionExecutionError) {
+      console.error(writeError);
       addNotification({
         message: "Transaction simulation failed",
         id: "claim-error",
@@ -155,6 +156,16 @@ export const ClaimCard: FC<{
       : undefined,
   });
 
+  const simulationErrorMessage = useMemo(() => {
+    if (
+      isSimulationError &&
+      simulationError instanceof ContractFunctionExecutionError
+    ) {
+      return simulationError.message;
+    }
+    return undefined;
+  }, [isSimulationError, simulationError]);
+
   const onClaim = useCallback(() => {
     if (notYetClaimedTokenIds && address && unconfirmedClaim) {
       console.log(
@@ -219,7 +230,7 @@ export const ClaimCard: FC<{
     refetch();
     reset();
   }, [refetch, reset]);
-
+  console.error(simulationError);
   return (
     <>
       <Card>
@@ -236,9 +247,14 @@ export const ClaimCard: FC<{
             </Typography>
           ) : null}
           {notYetClaimedTokenIds?.length && isSimulationError ? (
-            <Typography variant="body1" color="red" marginY={2}>
-              Simulation failed....
-            </Typography>
+            <>
+              <Typography variant="body1" color="red" marginY={2}>
+                Simulation failed....
+              </Typography>
+              <Typography variant="body1" color="red" marginY={2}>
+                {simulationErrorMessage}
+              </Typography>
+            </>
           ) : null}
           {hash ? (
             <TransactionProgress

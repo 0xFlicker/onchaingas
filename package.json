@@ -1,10 +1,23 @@
 {
   "name": "onchain-gas",
   "version": "1.0.0",
+  "description": "Historical onchain NFT experiment for Solidity-rendered gas-price visualizations",
   "main": "index.js",
   "private": true,
-  "repository": "git@github.com-cmdrnft:0xFlicker/onchaingas.git",
-  "author": "John Dean <john.holmes.dean@gmail.com>",
+  "repository": "git@github.com:0xFlicker/onchaingas.git",
+  "homepage": "https://onchaingas.vercel.app",
+  "bugs": {
+    "url": "https://github.com/0xFlicker/onchaingas/issues"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "nft",
+    "onchain-metadata",
+    "threejs",
+    "hardhat"
+  ],
+  "author": "0xFlicker",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.4.5"

@@ -6,11 +6,7 @@ export const metadata: Metadata = {
   description: "Wrap your Fame Lady.",
 };
 
-export default async function Page({
-  params,
-}: {
-  params: { network: string };
-}) {
+export default async function Page() {
   redirect(`/mainnet/wrap`);
   return null;
 }

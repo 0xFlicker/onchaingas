@@ -1,0 +1,7 @@
+{
+  "git": {
+    "deploymentEnabled": {
+      "codex/dependabot-security-fixes": false
+    }
+  }
+}

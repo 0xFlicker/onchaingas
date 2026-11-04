@@ -11,13 +11,11 @@ import { fetchMetadata } from "frames.js/next";
 import { baseUrl } from "@/app/frames/frames";
 
 interface Props {
-  params: { tokenId: string };
+  params: Promise<{ tokenId: string }>;
 }
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
+export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+  const params = await props.params;
   // read route params
   const { tokenId } = params;
   const network = "mainnet";
@@ -36,7 +34,8 @@ export async function generateMetadata(
   };
 }
 
-export default async function Page({ params }: Props) {
+export default async function Page(props: Props) {
+  const params = await props.params;
   const network = "mainnet";
   const { tokenId } = params;
 

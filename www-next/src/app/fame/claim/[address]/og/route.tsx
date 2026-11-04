@@ -20,10 +20,8 @@ const formatAllocationString = (amount: bigint) =>
 function formatUnit(amount: bigint) {
   return Math.floor(Number(formatEther(amount)));
 }
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { address: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ address: string }> }) {
+  const params = await props.params;
   const viemClient = mainnetClient;
 
   if (!isAddress(params.address)) {

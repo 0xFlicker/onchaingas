@@ -18,13 +18,11 @@ interface Params {
 }
 
 interface Props {
-  params: Params;
+  params: Promise<Params>;
 }
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
+export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+  const params = await props.params;
   // read route params
   const { address } = params;
   if (!isAddress(address)) {
@@ -82,11 +80,17 @@ export async function generateMetadata(
   };
 }
 
-export default async function Page({
-  params: { address },
-}: {
-  params: Params;
-}) {
+export default async function Page(
+  props: {
+    params: Promise<Params>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    address
+  } = params;
+
   return <FameClaimStatus address={address} />;
 }
 

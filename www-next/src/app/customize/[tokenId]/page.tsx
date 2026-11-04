@@ -6,10 +6,11 @@ export const metadata: Metadata = {
   description: "Customize your Fame Lady.",
 };
 
-export default async function Page({
-  params,
-}: {
-  params: { tokenId: string; network: string };
-}) {
+export default async function Page(
+  props: {
+    params: Promise<{ tokenId: string; network: string }>;
+  }
+) {
+  const params = await props.params;
   redirect(`/mainnet/customize/${params.tokenId}`);
 }

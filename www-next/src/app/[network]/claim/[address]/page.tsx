@@ -8,7 +8,8 @@ interface Params {
   address: string;
 }
 
-export default function Page({ params }: { params: Params }) {
+export default async function Page(props: { params: Promise<Params> }) {
+  const params = await props.params;
   if (!isAddress(params.address)) {
     return (
       <Whoops

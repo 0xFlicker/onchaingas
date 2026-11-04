@@ -20,7 +20,11 @@ const handleRequest = ({ address }: Params) =>
     };
   });
 
-export const GET = (req: NextRequest, { params }: { params: Params }) =>
-  handleRequest(params)(req);
-export const POST = (req: NextRequest, { params }: { params: Params }) =>
-  handleRequest(params)(req);
+export const GET = async (req: NextRequest, props: { params: Promise<Params> }) => {
+  const params = await props.params;
+  return handleRequest(params)(req);
+};
+export const POST = async (req: NextRequest, props: { params: Promise<Params> }) => {
+  const params = await props.params;
+  return handleRequest(params)(req);
+};

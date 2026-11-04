@@ -6,7 +6,8 @@ interface Params {
   network: string;
 }
 
-export default function Page({ params }: { params: Params }) {
+export default async function Page(props: { params: Promise<Params> }) {
+  const params = await props.params;
   const validNetwork = ["base", "sepolia"].includes(params.network);
   if (!validNetwork) {
     return redirect("/fame");

@@ -6,11 +6,7 @@ export const metadata: Metadata = {
   description: "Customize your Fame Lady.",
 };
 
-export default async function Page({
-  params,
-}: {
-  params: { network: string };
-}) {
+export default async function Page() {
   redirect(`/mainnet/customize`);
   return null;
 }

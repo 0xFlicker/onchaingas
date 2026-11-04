@@ -4,12 +4,13 @@ import { isAddress, keccak256, toHex, toBytes, getAddress } from "viem";
 import flsOwners from "./fls-snapshot.json";
 
 type Props = {
-  params: {
+  params: Promise<{
     address: string;
-  };
+  }>;
 };
 
-export async function GET(req: NextRequest, { params }: Props) {
+export async function GET(req: NextRequest, props: Props) {
+  const params = await props.params;
   let { address } = params;
   if (!isAddress(address)) {
     return new NextResponse("Invalid address", { status: 400 });

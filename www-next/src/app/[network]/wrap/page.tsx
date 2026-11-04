@@ -7,11 +7,12 @@ export const metadata: Metadata = {
   description: "Wrap your Fame Lady.",
 };
 
-export default async function Page({
-  params,
-}: {
-  params: { network: string };
-}) {
+export default async function Page(
+  props: {
+    params: Promise<{ network: string }>;
+  }
+) {
+  const params = await props.params;
   const { network } = params;
   let resolvedNetwork: "sepolia" | "mainnet";
   switch (network) {

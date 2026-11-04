@@ -16,8 +16,9 @@ import { fetchJson } from "@/ipfs/client";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { tokenId: string; network: string } },
+  props: { params: Promise<{ tokenId: string; network: string }> }
 ) {
+  const params = await props.params;
   const network = asNetwork(params.network);
   if (network === null) {
     console.log("network not found");

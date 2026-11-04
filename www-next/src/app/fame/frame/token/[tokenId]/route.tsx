@@ -13,10 +13,8 @@ function formatUnit(amount: bigint) {
   return Math.floor(Number(formatEther(amount)));
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { tokenId: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ tokenId: string }> }) {
+  const params = await props.params;
   const flsPoolAllocation = getFlsPoolAllocation(OG_RANK_BOOST, OG_AGE_BOOST);
   const allocation = flsPoolAllocation.get(Number(params.tokenId))!;
   const banned = isBannedToken(Number(params.tokenId));
